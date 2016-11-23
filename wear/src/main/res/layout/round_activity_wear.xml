@@ -5,7 +5,10 @@
                 android:layout_height="match_parent"
                 tools:context="com.example.brand.p9.WearActivity"
                 tools:deviceIds="wear_round">
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_msg"/>
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
