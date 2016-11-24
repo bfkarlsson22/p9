@@ -1,9 +1,7 @@
 package com.example.brand.p9;
 
-/**
- * Created by EmilSiegenfeldt on 23/11/2016.
- */
+import org.json.JSONObject;
 
 public interface Callback {
-    void serverTaskDone();
+    void serverTaskDone(JSONObject result);
 }
