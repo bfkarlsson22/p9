@@ -1,6 +1,7 @@
 package com.example.brand.p9;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,12 +9,17 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 public class MainActivity extends Activity implements DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -25,6 +31,10 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     private String TAG = "HELLO";
     public GoogleApiClient mGoogleApiClient;
     private boolean nodeConnected = false;
+    private Node connectedNode;
+    private Uri uri;
+    private String path = "/count";
+
 
 
     @Override
@@ -39,6 +49,67 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                 .build();
         mGoogleApiClient.connect();
 
+
+
+
+    }
+    private void getData() {
+        Uri uri = new Uri.Builder()
+                .scheme(PutDataRequest.WEAR_URI_SCHEME)
+                .path("wear://*/count")
+                .build();
+
+
+        Wearable.DataApi.getDataItems(mGoogleApiClient, uri)
+                .setResultCallback(new ResultCallback<DataItemBuffer>() {
+                                       @Override
+                                       public void onResult(DataItemBuffer dataItems) {
+                                           for(int i=0;i<dataItems.getCount();i++)
+                                           {
+                                               Log.d("WEAR APP", "The data is from: " +           dataItems.get(i).getUri().getAuthority());
+                                               DataMap data = DataMap.fromByteArray(dataItems.get(i).getData());
+                                               String data1 = data.getString("data");
+                                               Log.d(TAG, data1);
+                                           }
+                                       }
+                                   }
+                );
+    }
+    private void getConnectedNode()
+    {
+        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                for (Node node : nodes.getNodes()) {
+                    connectedNode = node;
+                }
+            }
+        });
+    }
+
+    private void buildUri(){
+         uri = new Uri.Builder()
+                .scheme(PutDataRequest.WEAR_URI_SCHEME)
+                .path("/count")
+                .authority(connectedNode.getId())
+                .build();
+    }
+
+    private void getStoredData(){
+        Wearable.DataApi.getDataItems(mGoogleApiClient, uri)
+                .setResultCallback(new ResultCallback<DataItemBuffer>() {
+                                       @Override
+                                       public void onResult(DataItemBuffer dataItems) {
+                                           for(int i=0;i<dataItems.getCount();i++)
+                                           {
+                                               Log.d("WEAR APP", "The data is from: " +           dataItems.get(i).getUri().getAuthority());
+                                               DataMap data = DataMap.fromByteArray(dataItems.get(i).getData());
+                                               String data1 = data.getString("data");
+                                               Log.d(TAG, data1);
+                                           }
+                                       }
+                                   }
+                );
     }
     @Override
     protected void onResume() {

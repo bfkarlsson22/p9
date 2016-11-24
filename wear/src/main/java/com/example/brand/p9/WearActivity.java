@@ -1,5 +1,8 @@
 package com.example.brand.p9;
+
+import android.content.Context;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -72,6 +75,9 @@ public class WearActivity extends WearableActivity implements DataApi.DataListen
                 .build();
         mGoogleApiClient.connect();
 
+      //  setUpStepCounter();
+
+
     }
 
     @Override
@@ -126,4 +132,39 @@ public class WearActivity extends WearableActivity implements DataApi.DataListen
             }
         });
     }
+
+    public void setUpStepCounter(){
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+        mStepListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
+                    if (event.values.length > 0) {
+                        //  mTextView1.setBackgroundResource(android.R.color.holo_green_light);
+                        //mTextView1.setText(Float.toString(event.values[0]));
+
+                        mFloatSteps = (event.values[0]);
+                        mNoSteps = Math.round(mFloatSteps);
+                        MESSAGE = Float.toString(event.values[0]);
+                        Log.d("8888", MESSAGE);
+                        Log.d("7777", String.valueOf(mNoSteps));
+
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        };
+        mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);}
+
+
+
+
 }
