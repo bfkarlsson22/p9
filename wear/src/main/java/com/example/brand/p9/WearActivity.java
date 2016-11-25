@@ -28,7 +28,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-public class WearActivity extends WearableActivity implements DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class WearActivity extends WearableActivity {
     private static final long CONNECTION_TIME_OUT_MS = 5000;
 
     private TextView mTextView;
@@ -48,6 +48,7 @@ public class WearActivity extends WearableActivity implements DataApi.DataListen
     private GoogleApiClient mGoogleApiClient;
     private int count = 0;
     private boolean nodeConnected = false;
+    Context context = this;
 
 
     @Override
@@ -65,41 +66,13 @@ public class WearActivity extends WearableActivity implements DataApi.DataListen
 
 
         });
-
-
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
+        mGoogleApiClient = new ApiClientBuilder(this).buildClient();
 
       //  setUpStepCounter();
 
 
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG, "onConnected: " + bundle);
-        // Now you can use the Data Layer API
-        nodeConnected = true;
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d(TAG, "onConnectionSuspended: " + i);
-        nodeConnected = false;
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed: " + connectionResult);
-        nodeConnected = false;
-    }
-
-    @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
         for (DataEvent event : dataEventBuffer) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
