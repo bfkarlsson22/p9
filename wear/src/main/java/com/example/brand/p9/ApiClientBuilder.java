@@ -9,6 +9,8 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by EmilSiegenfeldt on 25/11/2016.
@@ -45,7 +47,12 @@ public class ApiClientBuilder{
                 })
                 .build();
         mGoogleApiClient.connect();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("1234");
+
+        myRef.setValue("It works!");
         return mGoogleApiClient;
+
     }
 
 }

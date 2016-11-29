@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +23,8 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends Activity implements DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -34,6 +38,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
     private Node connectedNode;
     private Uri uri;
     private String path = "/count";
+    private Button sendDB;
 
 
 
@@ -50,6 +55,13 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         mGoogleApiClient.connect();
 
 
+        sendDB = (Button) findViewById(R.id.b_db);
+        sendDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                writeToDB();
+            }
+        });
 
 
     }
@@ -169,4 +181,10 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
         Log.d("3333", String.valueOf(c));
     }
 
+    public void writeToDB(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("1234");
+
+        myRef.setValue("Hello, World1234!");
+    }
 }

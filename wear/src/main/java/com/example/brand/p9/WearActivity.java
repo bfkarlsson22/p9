@@ -28,8 +28,6 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.util.Random;
-
 public class WearActivity extends WearableActivity {
     private static final long CONNECTION_TIME_OUT_MS = 5000;
 
@@ -71,6 +69,10 @@ public class WearActivity extends WearableActivity {
         mGoogleApiClient = new ApiClientBuilder(this).buildClient();
 
       //  setUpStepCounter();
+          /*  FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("1234");
+
+            myRef.setValue("It works!");*/
 
 
     }
