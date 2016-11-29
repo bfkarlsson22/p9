@@ -153,6 +153,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
                 DataItem item = event.getDataItem();
+                Log.d("ITEM",item.toString());
                 if (item.getUri().getPath().compareTo("/count") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateCount(dataMap.getInt(COUNT_KEY));

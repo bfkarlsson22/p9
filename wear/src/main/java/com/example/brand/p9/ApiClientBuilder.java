@@ -17,12 +17,13 @@ import com.google.android.gms.wearable.Wearable;
 public class ApiClientBuilder{
 
     private Context context;
+    GoogleApiClient mGoogleApiClient;
 
     public ApiClientBuilder(Context context){
         this.context = context;
     }
     public GoogleApiClient buildClient(){
-        GoogleApiClient mGoogleApiClient;
+
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {

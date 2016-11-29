@@ -7,17 +7,17 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -27,6 +27,8 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+
+import java.util.Random;
 
 public class WearActivity extends WearableActivity {
     private static final long CONNECTION_TIME_OUT_MS = 5000;
@@ -74,6 +76,8 @@ public class WearActivity extends WearableActivity {
     }
 
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        Log.d("ODC","CALLED");
+        Log.d("ODC EVENTS", String.valueOf(dataEventBuffer.getCount()));
         for (DataEvent event : dataEventBuffer) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
@@ -96,11 +100,25 @@ public class WearActivity extends WearableActivity {
         findViewById(R.id.btn_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count");
+                String connected = String.valueOf(mGoogleApiClient.isConnected());
+                Log.d("Connected send",connected);
+                Long time = System.currentTimeMillis();
+                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count/"+time);
                 putDataMapReq.getDataMap().putInt(COUNT_KEY, count++);
-                PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
                 PendingResult<DataApi.DataItemResult> pendingResult =
                         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+                pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                    @Override
+                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
+                        Log.d("DataItemResult",dataItemResult.toString());
+                        Log.d("DIR",dataItemResult.getStatus().toString());
+                        Log.d("DIR2", String.valueOf(dataItemResult.getStatus().isSuccess()));
+                        String isSuccess = String.valueOf(dataItemResult.getStatus().isSuccess());
+                        Log.d("DIR3",dataItemResult.getStatus().getStatusMessage());
+                        Toast.makeText(WearActivity.this, isSuccess, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Log.d("9999", String.valueOf(count));
             }
         });
@@ -123,7 +141,6 @@ public class WearActivity extends WearableActivity {
                         MESSAGE = Float.toString(event.values[0]);
                         Log.d("8888", MESSAGE);
                         Log.d("7777", String.valueOf(mNoSteps));
-
 
                     }
 
