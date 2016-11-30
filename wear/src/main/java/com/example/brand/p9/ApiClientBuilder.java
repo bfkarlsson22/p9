@@ -8,13 +8,13 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-/**
- * Created by EmilSiegenfeldt on 25/11/2016.
- */
 
 public class ApiClientBuilder{
 
@@ -24,6 +24,7 @@ public class ApiClientBuilder{
     public ApiClientBuilder(Context context){
         this.context = context;
     }
+
     public GoogleApiClient buildClient(){
 
         mGoogleApiClient = new GoogleApiClient.Builder(context)

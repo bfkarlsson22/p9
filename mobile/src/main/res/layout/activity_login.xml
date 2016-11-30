@@ -10,35 +10,34 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.brand.p9.LoginActivity">
 
-    <Button
-        android:text="Log In"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btLogin"
-        android:layout_marginTop="19dp"
-        android:layout_below="@+id/mEtPassword"
-        android:layout_alignStart="@+id/mEtPassword"
-        android:layout_alignEnd="@+id/mEtPassword" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberPassword"
+        android:inputType="textEmailAddress"
         android:ems="10"
-        android:layout_marginTop="56dp"
-        android:id="@+id/mEtId"
-        android:hint="Personnummer"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="96dp"
+        android:id="@+id/etEmail"
+        android:hint="E-mail" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberPassword"
+        android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/mEtPassword"
+        android:layout_marginTop="25dp"
+        android:id="@+id/etPassword"
         android:hint="Password"
-        android:layout_marginTop="19dp"
-        android:layout_below="@+id/mEtId"
-        android:layout_alignStart="@+id/mEtId" />
+        android:layout_below="@+id/etEmail"
+        android:layout_alignStart="@+id/etEmail" />
+
+    <Button
+        android:text="Log ind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/etPassword"
+        android:id="@+id/btLogIn"
+        android:layout_alignEnd="@+id/etPassword" />
 </RelativeLayout>
