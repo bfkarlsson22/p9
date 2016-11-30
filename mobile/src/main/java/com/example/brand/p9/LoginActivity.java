@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,18 +60,15 @@ public class LoginActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
 
-                Log.d("EMAIL",email);
-                Log.d("PASSWORD",password);
-
                 if(email.length() > 0 && password.length() > 0){
                     mAuth.signInWithEmailAndPassword(email,password)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    Log.d("TASK R.",task.getResult().toString());
-                                    Log.d("SUCCESS", String.valueOf(task.isSuccessful()));
-                                    Log.d("TASK RESULT", String.valueOf(task));
-                                    Log.d("TASK R",task.toString());
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference myRef = database.getReference("Login");
+
+                                    myRef.setValue("Hello, World1234!");
                                     loadMainActivity();
                                 }
                             });
