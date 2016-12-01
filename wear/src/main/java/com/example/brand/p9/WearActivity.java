@@ -1,6 +1,9 @@
 package com.example.brand.p9;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,10 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
@@ -56,6 +59,7 @@ public class WearActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wear);
         mSend = (Button) findViewById(R.id.btn_msg);
+        setAmbientEnabled();
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -68,7 +72,7 @@ public class WearActivity extends WearableActivity {
         });
         mGoogleApiClient = new ApiClientBuilder(this).buildClient();
 
-      //  setUpStepCounter();
+        setUpStepCounter();
           /*  FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("1234");
 
@@ -86,7 +90,6 @@ public class WearActivity extends WearableActivity {
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo("/count") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    updateCount(dataMap.getInt(COUNT_KEY));
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 // DataItem deleted
@@ -94,12 +97,8 @@ public class WearActivity extends WearableActivity {
         }
     }
 
-    public void updateCount(int c){
-        Log.d("4444", String.valueOf(c));
-    }
-
-    public  void setupWidgets() {
-        findViewById(R.id.btn_msg).setOnClickListener(new View.OnClickListener() {
+    public void setupWidgets() {
+        /*findViewById(R.id.btn_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String connected = String.valueOf(mGoogleApiClient.isConnected());
@@ -110,18 +109,20 @@ public class WearActivity extends WearableActivity {
                 PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
                 PendingResult<DataApi.DataItemResult> pendingResult =
                         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-                pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                    @Override
-                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
-                        Log.d("DataItemResult",dataItemResult.toString());
-                        Log.d("DIR",dataItemResult.getStatus().toString());
-                        Log.d("DIR2", String.valueOf(dataItemResult.getStatus().isSuccess()));
-                        String isSuccess = String.valueOf(dataItemResult.getStatus().isSuccess());
-                        Log.d("DIR3",dataItemResult.getStatus().getStatusMessage());
-                        Toast.makeText(WearActivity.this, isSuccess, Toast.LENGTH_SHORT).show();
-                    }
-                });
                 Log.d("9999", String.valueOf(count));
+            }
+        });*/
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+/*                Intent intent = new Intent(context,TestActivity.class);
+                startActivity(intent);*/
+
+                SQLite sqLite = new SQLite(context);
+                Cursor data = sqLite.getData();
+
+                String cursorData = DatabaseUtils.dumpCursorToString(data);
+                Log.d("CURSOR DATA",cursorData);
             }
         });
     }
@@ -135,28 +136,40 @@ public class WearActivity extends WearableActivity {
             public void onSensorChanged(SensorEvent event) {
                 if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
                     if (event.values.length > 0) {
-                        //  mTextView1.setBackgroundResource(android.R.color.holo_green_light);
-                        //mTextView1.setText(Float.toString(event.values[0]));
-
                         mFloatSteps = (event.values[0]);
                         mNoSteps = Math.round(mFloatSteps);
-                        MESSAGE = Float.toString(event.values[0]);
-                        Log.d("8888", MESSAGE);
-                        Log.d("7777", String.valueOf(mNoSteps));
+                        final String time = String.valueOf(System.currentTimeMillis());
 
+                        SQLite sqLite = new SQLite(context);
+                        sqLite.addData(System.currentTimeMillis(),"STEP",1);
+
+                        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count/"+time);
+                        putDataMapReq.getDataMap().putInt("STEP",1);
+                        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
+                        PendingResult<DataApi.DataItemResult> result= Wearable.DataApi.putDataItem(mGoogleApiClient,putDataReq);
+                        result.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                            @Override
+                            public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
+                                DataApi.DataItemResult result = dataItemResult;
+
+                                boolean success = result.getStatus().isSuccess();
+                                String status = result.getStatus().getStatusMessage();
+
+                                if(success){
+                                    Log.d("DATA SENT","SENT / "+status);
+                                    Log.d("TIME",time);
+                                } else {
+                                    Log.d("DATA NOT SENT", status);
+                                }
+                            }
+                        });
                     }
-
                 }
             }
-
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
             }
         };
-        mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);}
-
-
-
-
+        mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 }

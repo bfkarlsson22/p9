@@ -30,6 +30,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
+
 public class MainActivity extends Activity implements DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String COUNT_KEY = "com.example.key.count";
@@ -75,9 +77,6 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
                 }
             }
         };
-
-
-
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -197,13 +196,17 @@ public class MainActivity extends Activity implements DataApi.DataListener, Goog
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
                 DataItem item = event.getDataItem();
-                Log.d("ITEM",item.toString());
                 DataMap data = DataMapItem.fromDataItem(item).getDataMap();
                 Log.d("DATA",data.toString());
-                Log.d("DATA", String.valueOf(data));
-                if (item.getUri().getPath().compareTo("/count") == 0) {
+                Log.d("DATA ITEM",item.getUri().toString());
+                List<String> segments = item.getUri().getPathSegments();
+                Log.d("Segments",segments.toString());
+
+                if (item.getUri().getPath().compareTo("/count/") == 0) {
+                    count++;
+                    Log.d("COUNT", String.valueOf(count));
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    updateCount(dataMap.getInt(COUNT_KEY));
+                    //updateCount(dataMap.getInt(COUNT_KEY));
 
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
