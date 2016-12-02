@@ -38,9 +38,11 @@ public class WatchFaceService extends CanvasWatchFaceService {
             Log.d("TIK","TOK");
             SQLite sqLite = new SQLite(getApplicationContext());
             Cursor data = sqLite.getData();
+            int dataCount = data.getCount();
 
-            String cursorData = DatabaseUtils.dumpCursorToString(data);
-            Log.d("CURSOR DATA",cursorData);
+            DataManager dataManager = new DataManager(getApplicationContext());
+            dataManager.sendData();
+            Log.d("DATA COUNT", String.valueOf(dataCount));
         }
 
         @Override

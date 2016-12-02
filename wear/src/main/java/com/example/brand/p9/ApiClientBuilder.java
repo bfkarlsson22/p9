@@ -48,10 +48,6 @@ public class ApiClientBuilder{
                 })
                 .build();
         mGoogleApiClient.connect();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("1234");
-
-        myRef.setValue("It works!");
         return mGoogleApiClient;
 
     }

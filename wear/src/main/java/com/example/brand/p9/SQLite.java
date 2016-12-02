@@ -20,7 +20,7 @@ public class SQLite extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE DATA (" + "TIME INTEGER PRIMARY KEY, UNIT TEXT, VALUE REAL);");
+        db.execSQL("CREATE TABLE DATA (" + "TIME INTEGER PRIMARY KEY, UNIT TEXT, VALUE REAL, SENT NUMERIC);");
     }
 
     @Override
@@ -34,6 +34,7 @@ public class SQLite extends SQLiteOpenHelper {
         values.put("TIME", time);
         values.put("UNIT",unit);
         values.put("VALUE",value);
+        values.put("SENT",0);
 
         db.insert("DATA",null,values);
         db.close();
@@ -45,5 +46,13 @@ public class SQLite extends SQLiteOpenHelper {
         String query = "SELECT * FROM DATA ORDER BY TIME DESC";
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
+    }
+
+    public void syncData(){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM DATA WHERE SENT='0' ORDER BY TIME DESC";
+        Cursor cursor = db.rawQuery(query,null);
+
+
     }
 }
