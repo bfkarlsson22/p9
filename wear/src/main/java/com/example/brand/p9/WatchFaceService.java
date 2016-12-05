@@ -39,9 +39,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             SQLite sqLite = new SQLite(getApplicationContext());
             Cursor data = sqLite.getData();
             int dataCount = data.getCount();
-
-            DataManager dataManager = new DataManager(getApplicationContext());
-            dataManager.sendData();
+            //sqLite.syncData();
             Log.d("DATA COUNT", String.valueOf(dataCount));
         }
 
