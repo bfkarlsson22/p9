@@ -1,5 +1,6 @@
 package com.example.brand.p9;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.wearable.DataEvent;
@@ -11,16 +12,25 @@ import com.google.android.gms.wearable.WearableListenerService;
 
 public class DataReceiverWear extends WearableListenerService {
 
+    public String mMessage;
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         for(DataEvent event : dataEvents){
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
-                Log.d("DATA ITEM",dataItem.toString());
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
-                Log.d("DATA MAP",dataMap.toString());
-
+                mMessage = dataMap.get("message");
+                if(mMessage !=null){
+                    Log.d("6666", mMessage);
+                    Intent intent = new Intent(this, Messages.class);
+                    intent.putExtra("message", mMessage);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
             }
         }
     }
+
+
+
 }

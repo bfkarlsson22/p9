@@ -23,7 +23,9 @@
             android:name="com.google.android.wearable"
             android:required="false" />
 
-
+        <activity
+            android:name=".Messages"
+            android:label="messages"></activity>
         <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"></activity>

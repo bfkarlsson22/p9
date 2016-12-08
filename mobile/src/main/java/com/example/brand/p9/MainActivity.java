@@ -10,11 +10,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.DataMapItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -25,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -34,7 +28,7 @@ public class MainActivity extends Activity {
     public GoogleApiClient mGoogleApiClient;
     private Button sendDB;
     private Button btLogOut;
-    Context context = this;
+    Context mContext = this;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
@@ -44,6 +38,8 @@ public class MainActivity extends Activity {
     String name;
     String userName;
     String partner;
+    public DataSenderMobile messageSender;
+    private Button mButtonNotify;
 
 
 
@@ -52,9 +48,15 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        messageSender = new DataSenderMobile(mContext);
 
         startService(new Intent(this, DataReceiverMobile.class));
-
+        mButtonNotify = (Button) findViewById(R.id.bNotify);
+        mButtonNotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         btLogOut = (Button) findViewById(R.id.btLogOut);
         btLogOut.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +114,7 @@ public class MainActivity extends Activity {
 
     public void writeMessage(){
 
-        String message = "hello";
+        String message = "Good job Brandur, this message stuff is awesome";
         DatabaseReference messageRef = mDatabase.getReference("messages/" + groups + "/"+partner);
         messageRef.push().setValue(message);
 
@@ -158,14 +160,18 @@ public class MainActivity extends Activity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
                 String check = dataSnapshot.getValue().toString();
-                Log.d("8888", "onchildadded: " + check);}
+                    messageSender.sendMessage(check);
+
+                    Log.d("6666", "onchildadded: " + check);}
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
                 String check = dataSnapshot.getValue().toString();
-                Log.d("8888", "onchildchanged: " + check);
+                    messageSender.sendMessage(check);
+
+                    Log.d("5555", "onchildchanged: " + check);
             }}
 
             @Override
@@ -184,7 +190,7 @@ public class MainActivity extends Activity {
             }
         };
 
-        listenerRef.addChildEventListener(messageListener);
+        listenerRef.limitToLast(1).addChildEventListener(messageListener);
 
     }
 
@@ -279,7 +285,7 @@ public class MainActivity extends Activity {
     }
 
     private void loadLoginActivity(){
-        Intent intent = new Intent(context,LoginActivity.class);
+        Intent intent = new Intent(mContext,LoginActivity.class);
         startActivity(intent);
     }
 

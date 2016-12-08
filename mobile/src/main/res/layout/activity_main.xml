@@ -25,4 +25,13 @@
         android:layout_alignBottom="@+id/b_db"
         android:layout_alignParentStart="true"
         android:id="@+id/btLogOut" />
+
+    <Button
+        android:text="Notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bNotify"
+        android:layout_below="@+id/btLogOut"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="106dp"/>
 </RelativeLayout>

@@ -2,8 +2,6 @@ package com.example.brand.p9;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,10 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
-import android.util.Log;
 import android.view.View;
-
-import com.google.android.gms.wearable.DataMap;
 
 public class WearActivity extends WearableActivity {
 
@@ -22,6 +17,7 @@ public class WearActivity extends WearableActivity {
     private Sensor mSensor;
     public SensorEventListener mStepListener;
     Context context;
+    public DataReceiverWear messageReceiver;
 
 
     @Override
@@ -31,6 +27,7 @@ public class WearActivity extends WearableActivity {
         setAmbientEnabled();
         startService(new Intent(this, DataReceiverWear.class));
         context = this;
+        messageReceiver = new DataReceiverWear();
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
