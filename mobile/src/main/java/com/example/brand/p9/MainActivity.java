@@ -111,39 +111,28 @@ public class MainActivity extends Activity {
 
     public void getUserInfoFromFB(){
 
-        synchronized (this){
+
             String userName1 = mAuth.getCurrentUser().getEmail();
             String parts[] = userName1.split("@");
             String user = parts[0];
-
             DatabaseReference userRef = mDatabase.getReference("user/" + user);
-
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String response = dataSnapshot.getValue().toString();
-
                     User user = dataSnapshot.getValue(User.class);
-
-
                     name = user.getName();
                     email = user.getEmail();
                     uid = user.getUid();
                     groups = user.getGroups();
                     userName = user.getUsername();
                     Log.d("9999", name + " " + email + " " + uid + " " + groups + " " + userName);
-
-
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
-
-
-        }}
+        }
 
     public void writeMessage(){
 
@@ -156,12 +145,9 @@ public class MainActivity extends Activity {
     public void getGroupMember(){
 
         DatabaseReference groupRef = mDatabase.getReference("groups/" + groups + "/members/");
-
-
         groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 if (dataSnapshot.getValue() != null) {
                     String ble = dataSnapshot.getValue().toString();
                     Log.d("9999", ble);
@@ -190,11 +176,7 @@ public class MainActivity extends Activity {
     }
 
     public void listenForMsg(){
-
-
-
         DatabaseReference listenerRef = mDatabase.getReference("messages/" + groups + "/" + userName);
-
         ChildEventListener messageListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
