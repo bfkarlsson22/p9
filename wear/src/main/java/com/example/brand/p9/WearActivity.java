@@ -1,6 +1,7 @@
 package com.example.brand.p9;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.hardware.Sensor;
@@ -13,13 +14,14 @@ import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.wearable.DataMap;
+
 public class WearActivity extends WearableActivity {
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
     public SensorEventListener mStepListener;
-
-    Context context = this;
+    Context context;
 
 
     @Override
@@ -27,6 +29,8 @@ public class WearActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wear);
         setAmbientEnabled();
+        startService(new Intent(this, DataReceiverWear.class));
+        context = this;
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -43,11 +47,7 @@ public class WearActivity extends WearableActivity {
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SQLite sqLite = new SQLite(context);
-                Cursor data = sqLite.getData();
 
-                String cursorData = DatabaseUtils.dumpCursorToString(data);
-                Log.d("CURSOR DATA",cursorData);
             }
         });
     }
@@ -61,10 +61,11 @@ public class WearActivity extends WearableActivity {
             public void onSensorChanged(SensorEvent event) {
                 if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
                     if (event.values.length > 0) {
+                        LocalStorageWear localStorage = new LocalStorageWear(context);
+                        localStorage.addUserData(System.currentTimeMillis(),"STEP",1);
 
-                        SQLite sqLite = new SQLite(context);
-                        sqLite.addUserData(System.currentTimeMillis(),"STEP",1);
-                        //sqLite.syncData();
+                        DataSenderWear dataSender = new DataSenderWear(context);
+                        dataSender.sendData();
                     }
                 }
             }

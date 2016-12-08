@@ -5,15 +5,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.google.android.gms.wearable.DataMap;
 
-public class SQLite extends SQLiteOpenHelper {
+import java.util.List;
+
+public class LocalStorageWear extends SQLiteOpenHelper {
     private static final String DB_NAME = "LocalStorage";
     private static final int DB_VERSION = 1;
     Context context;
 
-    SQLite(Context context){
+    LocalStorageWear(Context context){
         super(context, DB_NAME,null,DB_VERSION);
         this.context = context;
     }
@@ -50,36 +53,27 @@ public class SQLite extends SQLiteOpenHelper {
         db.execSQL(query);
     }*/
 
-    public Cursor getData(){
+    public Cursor getUnsentData(){
         SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM USERDATA WHERE SENT=0";
 
-        String query = "SELECT * FROM USERDATA ORDER BY ID DESC";
         Cursor cursor = db.rawQuery(query,null);
-
         return cursor;
     }
 
-    public void syncData(){
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM USERDATA WHERE SENT='0' ORDER BY TIME DESC";
-        Cursor cursor = db.rawQuery(query,null);
-        DataManager dataManager = new DataManager(context);
-        db.close();
-        /*if (cursor.moveToFirst()) {
-            do {
-                Long time = cursor.getLong(cursor.getColumnIndex("TIME"));
-                String unit = cursor.getString(cursor.getColumnIndex("UNIT"));
-                float value = cursor.getFloat(cursor.getColumnIndex("VALUE"));
+    //When the phone sends a callback regarding which data has been received.
+    public void onReceiveCallback(List<Integer> ids){
+        SQLiteDatabase db = getWritableDatabase();
 
-                DataMap dataMap = new DataMap();
-                dataMap.putLong("TIME",time);
-                dataMap.putString("UNIT",unit);
-                dataMap.putFloat("VALUE",value);
-                dataManager.sendData(dataMap);
-            } while (cursor.moveToNext());
+        String idsToUpdate = "";
 
-        }*/
-
+        for(int i = 0; i<ids.size(); i++){
+            if(i == 0) {
+                idsToUpdate = idsToUpdate+ids.get(i).toString();
+            } else {
+                idsToUpdate = idsToUpdate + ", " + ids.get(i).toString();
+            }
+        }
+        Log.d("IDS TO UPDATE",idsToUpdate);
     }
-
 }
