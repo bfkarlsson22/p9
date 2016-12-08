@@ -40,4 +40,34 @@
         android:layout_alignStart="@+id/etPassword"
         android:id="@+id/btLogIn"
         android:layout_alignEnd="@+id/etPassword" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:layout_marginTop="23dp"
+        android:id="@+id/etCreateEmail"
+        android:hint="Create E-mail"
+        android:layout_below="@+id/btLogIn"
+        android:layout_alignStart="@+id/btLogIn"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/etCreatePassword"
+        android:hint="Password"
+        android:layout_below="@+id/etCreateEmail"
+        android:layout_alignStart="@+id/etCreateEmail"/>
+
+    <Button
+        android:text="Log ind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btRegister"
+        android:layout_below="@+id/etCreatePassword"
+        android:layout_alignStart="@+id/etCreatePassword"
+        android:layout_marginTop="12dp"/>
 </RelativeLayout>
