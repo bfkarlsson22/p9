@@ -210,6 +210,81 @@ public class MainActivity extends Activity {
 
     }
 
+    public void sendSteps(){
+        int steps = 1;
+        DatabaseReference stepRef = mDatabase.getReference("steps/"+userName);
+        stepRef.push().setValue(steps);
+    }
+
+    public void sendActiveMinutes(){
+        int min = 1;
+        DatabaseReference minRef = mDatabase.getReference("active minutes/"+userName);
+        minRef.push().setValue(min);
+    }
+
+    public void listenForSteps(){
+        DatabaseReference stepListenerRef = mDatabase.getReference("steps/" + partner);
+        ChildEventListener stepListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        stepListenerRef.addChildEventListener(stepListener);
+
+    }
+
+    public void listenForMin(){
+        DatabaseReference minListenerRef = mDatabase.getReference("active minutes/" + partner);
+        ChildEventListener minListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        minListenerRef.addChildEventListener(minListener);
+
+    }
     @Override
     protected void onStart() {
         super.onStart();
