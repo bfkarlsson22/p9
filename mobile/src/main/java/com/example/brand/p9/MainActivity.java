@@ -180,15 +180,17 @@ public class MainActivity extends Activity {
         ChildEventListener messageListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String check = dataSnapshot.getValue(String.class);
-                Log.d("8888", "onchildadded: " + check);
+                if (dataSnapshot.getValue() != null){
+                String check = dataSnapshot.getValue().toString();
+                Log.d("8888", "onchildadded: " + check);}
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String check = dataSnapshot.getValue(String.class);
+                if (dataSnapshot.getValue() != null){
+                String check = dataSnapshot.getValue().toString();
                 Log.d("8888", "onchildchanged: " + check);
-            }
+            }}
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -285,6 +287,7 @@ public class MainActivity extends Activity {
         minListenerRef.addChildEventListener(minListener);
 
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -298,6 +301,7 @@ public class MainActivity extends Activity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
     private void loadLoginActivity(){
         Intent intent = new Intent(context,LoginActivity.class);
         startActivity(intent);
