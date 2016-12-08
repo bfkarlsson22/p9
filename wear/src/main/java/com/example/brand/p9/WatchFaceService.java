@@ -1,12 +1,14 @@
 package com.example.brand.p9;
 
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.icu.text.DecimalFormat;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
@@ -31,6 +33,11 @@ public class WatchFaceService extends CanvasWatchFaceService {
     }
     private class Engine extends CanvasWatchFaceService.Engine{
 
+        private double userSteps;
+        private double userGoal;
+        private double competitorSteps;
+        private double competitorGoal;
+
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
@@ -48,10 +55,25 @@ public class WatchFaceService extends CanvasWatchFaceService {
             super.onTimeTick();
             /* the time changed */
             Log.d("TIK","TOK");
-            invalidate();
 
             DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
             dataSender.sendData();
+
+            LocalStorageWear db = new LocalStorageWear(getApplicationContext());
+
+            Long time = System.currentTimeMillis();
+            java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
+            String day = simpleDateFormat.format(new Date(time));
+
+            Cursor cursor = db.getDaily(0,"STEP",day);
+            cursor.moveToFirst();
+            userSteps = cursor.getDouble(cursor.getColumnIndex("VALUE"));
+            userGoal = 100;
+
+            competitorSteps = 100;
+            competitorGoal = 200;
+
+            invalidate();
         }
 
         @Override
@@ -110,17 +132,18 @@ public class WatchFaceService extends CanvasWatchFaceService {
             paintStepCounterCompetitor.setTextSize(25);
             paintStepCounterCompetitor.setAntiAlias(true);
 
+            float userSweepAngle = calcSweepAngle(userSteps,userGoal);
+            float competitorSweepAngle = calcSweepAngle(competitorSteps,competitorGoal);
 
             //DRAW USERS GRAPHS
             RectF rectUser = new RectF(left,top,right,bottom);
-            canvas.drawArc (rectUser, 180, 180, false, paintStepsUser);
+            canvas.drawArc (rectUser, 180, userSweepAngle, false, paintStepsUser);
             canvas.drawArc(rectUser,180,-120,false,paintActivity);
 
             //DRAW COMPETITORS GRAPHS
             RectF rectCompetitor = new RectF(left+20,top+20,right-20,bottom-20);
-            canvas.drawArc(rectCompetitor,180,90,false,paintStepsCompetitor);
+            canvas.drawArc(rectCompetitor,180,competitorSweepAngle,false,paintStepsCompetitor);
             canvas.drawArc(rectCompetitor,180,-90,false,paintActivity);
-
 
             //DRAW CLOCK
             float timeXOffset = calcXOffset(formattedTime,paintTime,bounds);
@@ -128,14 +151,12 @@ public class WatchFaceService extends CanvasWatchFaceService {
             canvas.drawText(formattedTime,timeXOffset,timeYOffset,paintTime);
 
             //DRAW STEP COUNTERS
-            String userSteps = String.valueOf(2048);
-            String competitorSteps = String.valueOf(1024);
 
-            float userStepXOffset = calcXOffset(userSteps,paintStepCounterUser,bounds);
-            float competitorXOffset = calcXOffset(competitorSteps,paintStepCounterCompetitor,bounds);
+            float userStepXOffset = calcXOffset(String.valueOf(userSteps),paintStepCounterUser,bounds);
+            float competitorXOffset = calcXOffset(String.valueOf(competitorSteps),paintStepCounterCompetitor,bounds);
 
-            canvas.drawText("2048",userStepXOffset,bounds.centerY()-80,paintStepCounterUser);
-            canvas.drawText("1012",competitorXOffset, bounds.centerY()-50,paintStepCounterCompetitor);
+            canvas.drawText(String.valueOf(userSteps),userStepXOffset,bounds.centerY()-80,paintStepCounterUser);
+            canvas.drawText(String.valueOf(competitorSteps),competitorXOffset, bounds.centerY()-50,paintStepCounterCompetitor);
 
 
         }
@@ -158,6 +179,15 @@ public class WatchFaceService extends CanvasWatchFaceService {
             paint.getTextBounds(text,0,text.length(),textBounds);
             float textHeight = textBounds.height();
             return center + (textHeight /2.0f);
+        }
+
+        public float calcSweepAngle(double steps, double goal){
+            float progress = (float) ((steps/goal)*100);
+            float sweepAngle = (float)(progress*1.8);
+            if(sweepAngle > 180){
+                sweepAngle = 180;
+            }
+            return sweepAngle;
         }
     }
 }

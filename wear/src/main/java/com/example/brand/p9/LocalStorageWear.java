@@ -9,16 +9,25 @@ import android.util.Log;
 
 import com.google.android.gms.wearable.DataMap;
 
+import java.util.Date;
 import java.util.List;
 
 public class LocalStorageWear extends SQLiteOpenHelper {
     private static final String DB_NAME = "LocalStorage";
     private static final int DB_VERSION = 1;
     Context context;
+    String day;
 
     LocalStorageWear(Context context){
         super(context, DB_NAME,null,DB_VERSION);
         this.context = context;
+
+        Long time = System.currentTimeMillis();
+        java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
+        day = simpleDateFormat.format(new Date(time));
+
+        checkDaily();
+
     }
 
     @Override
@@ -42,18 +51,17 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
         db.insert("USERDATA",null,values);
         db.close();
+
+        Log.d("UPDATED STEP","TRUE");
+        updateDaily(unit,day,value,0);
     }
 
-    public void addDailyData(String unit, double value, String day, String user){
-
-    }
-
-
-    /*public void updateDaily(String unit, double value, String day){
+    public void updateDaily(String unit, String day, double value, int user){
         SQLiteDatabase db = getWritableDatabase();
-        String query = "UPDATE DAILYDATA SET "+unit+" = "+value+" WHERE USER = 1 AND DAY = "+day;
+        String query = "UPDATE DAILYDATA SET VALUE = VALUE + "+value+" WHERE USER="+user+" AND UNIT='"+unit+"' AND DAY='"+day+"'";
         db.execSQL(query);
-    }*/
+        Log.d("UPDATED DAILY","TRUE");
+    }
 
     public Cursor getUnsentData(){
         SQLiteDatabase db = getReadableDatabase();
@@ -62,4 +70,83 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
     }
+
+    public Cursor getDaily(int user, String unit, String day){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM DAILYDATA WHERE USER="+user+" AND UNIT='"+unit+"' AND DAY='"+day+"'";
+
+        Cursor cursor = db.rawQuery(query,null);
+        return cursor;
+    }
+
+    //check if a daily entry exists otherwise create one
+    private void checkDaily() {
+        boolean createUserEntry;
+        boolean createCompetitorEntry;
+
+        SQLiteDatabase readableDatabase = getReadableDatabase();
+        String queryUser = "SELECT ID FROM DAILYDATA WHERE USER=0 AND DAY='"+day+"'";
+        String queryCompetitor = "SELECT ID FROM DAILYDATA WHERE USER=1 AND DAY='"+day+"'";
+
+        Cursor cursorUser = readableDatabase.rawQuery(queryUser,null);
+        Cursor cursorCompetitor = readableDatabase.rawQuery(queryCompetitor,null);
+
+        if(cursorUser.getCount() < 1){
+            createUserEntry = true;
+        } else {
+            createUserEntry = false;
+        }
+
+        if(cursorCompetitor.getCount() < 1){
+            createCompetitorEntry = true;
+        } else {
+            createCompetitorEntry = false;
+        }
+        readableDatabase.close();
+
+        if(createCompetitorEntry) {
+            SQLiteDatabase writableDatabase = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put("UNIT","STEP");
+            values.put("USER",1);
+            values.put("DAY",day);
+            values.put("VALUE",0);
+            writableDatabase.insert("DAILYDATA", null, values);
+
+            values.clear();
+
+            values.put("UNIT","MINUTES");
+            values.put("USER",1);
+            values.put("DAY",day);
+            values.put("VALUE",0);
+            writableDatabase.insert("DAILYDATA",null,values);
+
+            writableDatabase.close();
+        }
+
+        if(createUserEntry){
+            SQLiteDatabase writableDatabase = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put("UNIT","STEP");
+            values.put("USER",0);
+            values.put("DAY",day);
+            values.put("VALUE",0);
+            writableDatabase.insert("DAILYDATA", null, values);
+
+            values.clear();
+
+            values.put("UNIT","MINUTES");
+            values.put("USER",0);
+            values.put("DAY",day);
+            values.put("VALUE",0);
+            writableDatabase.insert("DAILYDATA",null,values);
+
+            writableDatabase.close();
+        }
+    }
+
+
+
 }
