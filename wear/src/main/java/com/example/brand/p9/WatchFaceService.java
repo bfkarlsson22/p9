@@ -95,7 +95,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             Paint paintTime = new Paint();
             paintTime.setColor(Color.WHITE);
-            paintTime.setTextSize(10);
+            paintTime.setTextSize(25);
             paintTime.setAntiAlias(true);
 
             //DRAW USERS GRAPHS
