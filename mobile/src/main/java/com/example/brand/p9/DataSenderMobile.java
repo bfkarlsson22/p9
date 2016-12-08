@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -28,6 +29,15 @@ public class DataSenderMobile {
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
 
+    }
+
+    public void callBack(String[] ids){
+        buildApi();
+        String time = String.valueOf(System.currentTimeMillis());
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/callback");
+        putDataMapReq.getDataMap().putStringArray("Received data ids",ids);
+        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
+        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
     }
     public void buildApi(){
         googleApiClient = new GoogleApiClient.Builder(context).addApi(Wearable.API).build();

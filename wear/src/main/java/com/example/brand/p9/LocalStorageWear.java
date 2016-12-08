@@ -43,9 +43,11 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         db.insert("USERDATA",null,values);
         db.close();
     }
+
     public void addDailyData(String unit, double value, String day, String user){
 
     }
+
 
     /*public void updateDaily(String unit, double value, String day){
         SQLiteDatabase db = getWritableDatabase();
@@ -59,21 +61,5 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
-    }
-
-    //When the phone sends a callback regarding which data has been received.
-    public void onReceiveCallback(List<Integer> ids){
-        SQLiteDatabase db = getWritableDatabase();
-
-        String idsToUpdate = "";
-
-        for(int i = 0; i<ids.size(); i++){
-            if(i == 0) {
-                idsToUpdate = idsToUpdate+ids.get(i).toString();
-            } else {
-                idsToUpdate = idsToUpdate + ", " + ids.get(i).toString();
-            }
-        }
-        Log.d("IDS TO UPDATE",idsToUpdate);
     }
 }

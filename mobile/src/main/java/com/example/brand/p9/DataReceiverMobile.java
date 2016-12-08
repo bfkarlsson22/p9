@@ -20,7 +20,6 @@ public class DataReceiverMobile extends WearableListenerService {
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
                 Log.d("DATA MAP",dataMap.toString());
                 Log.d("DATA ITEM",dataItem.toString());
-                Log.d("DATA IDS", dataMap.keySet().toString());
             }
         }
         Context context = this;

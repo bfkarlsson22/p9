@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.icu.text.SimpleDateFormat;
@@ -47,7 +48,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             super.onTimeTick();
             /* the time changed */
             Log.d("TIK","TOK");
-            //invalidate();
+            invalidate();
 
             DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
             dataSender.sendData();
@@ -62,6 +63,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
             /* draw your watch face */
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
             Long time = System.currentTimeMillis();
             java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("HH:mm");
@@ -95,8 +97,19 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             Paint paintTime = new Paint();
             paintTime.setColor(Color.WHITE);
-            paintTime.setTextSize(25);
+            paintTime.setTextSize(60);
             paintTime.setAntiAlias(true);
+
+            Paint paintStepCounterUser = new Paint();
+            paintStepCounterUser.setColor(Color.parseColor("#A6A6A6"));
+            paintStepCounterUser.setTextSize(30);
+            paintStepCounterUser.setAntiAlias(true);
+
+            Paint paintStepCounterCompetitor = new Paint();
+            paintStepCounterCompetitor.setColor(Color.parseColor("#A6A6A6"));
+            paintStepCounterCompetitor.setTextSize(25);
+            paintStepCounterCompetitor.setAntiAlias(true);
+
 
             //DRAW USERS GRAPHS
             RectF rectUser = new RectF(left,top,right,bottom);
@@ -109,8 +122,21 @@ public class WatchFaceService extends CanvasWatchFaceService {
             canvas.drawArc(rectCompetitor,180,-90,false,paintActivity);
 
 
+            //DRAW CLOCK
             float timeXOffset = calcXOffset(formattedTime,paintTime,bounds);
-            canvas.drawText(formattedTime,timeXOffset,centerY,paintTime);
+            float timeYOffset = calcYOffset(formattedTime,paintTime,bounds);
+            canvas.drawText(formattedTime,timeXOffset,timeYOffset,paintTime);
+
+            //DRAW STEP COUNTERS
+            String userSteps = String.valueOf(2048);
+            String competitorSteps = String.valueOf(1024);
+
+            float userStepXOffset = calcXOffset(userSteps,paintStepCounterUser,bounds);
+            float competitorXOffset = calcXOffset(competitorSteps,paintStepCounterCompetitor,bounds);
+
+            canvas.drawText("2048",userStepXOffset,bounds.centerY()-80,paintStepCounterUser);
+            canvas.drawText("1012",competitorXOffset, bounds.centerY()-50,paintStepCounterCompetitor);
+
 
         }
 
@@ -124,6 +150,14 @@ public class WatchFaceService extends CanvasWatchFaceService {
             float center = bounds.exactCenterX();
             float textLength = paint.measureText(text);
             return center - (textLength/2.0f);
+        }
+
+        public float calcYOffset(String text, Paint paint, Rect bounds){
+            float center = bounds.exactCenterY();
+            Rect textBounds = new Rect();
+            paint.getTextBounds(text,0,text.length(),textBounds);
+            float textHeight = textBounds.height();
+            return center + (textHeight /2.0f);
         }
     }
 }
