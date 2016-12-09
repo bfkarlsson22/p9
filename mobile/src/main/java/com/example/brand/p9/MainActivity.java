@@ -117,6 +117,11 @@ public class MainActivity extends Activity {
         String message = "Good job Brandur, this message stuff is awesome";
         DatabaseReference messageRef = mDatabase.getReference("messages/" + groups + "/"+partner);
         messageRef.push().setValue(message);
+        HashMap<String, String> messageMap = new HashMap<>();
+        messageMap.put("Message","Message");
+        messageMap.put("Time","time");
+        messageMap.put("Reply","true");
+        messageRef.push().setValue(messageMap);
 
     }
 
@@ -160,6 +165,8 @@ public class MainActivity extends Activity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
                 String check = dataSnapshot.getValue().toString();
+
+
                     messageSender.sendMessage(check);
 
                     Log.d("6666", "onchildadded: " + check);}
