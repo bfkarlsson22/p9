@@ -55,7 +55,9 @@ public class MainActivity extends Activity {
         mButtonNotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
             }
+
         });
         mAuth = FirebaseAuth.getInstance();
         btLogOut = (Button) findViewById(R.id.btLogOut);
@@ -115,12 +117,15 @@ public class MainActivity extends Activity {
     public void writeMessage(){
 
         String message = "Good job Brandur, this message stuff is awesome";
-        DatabaseReference messageRef = mDatabase.getReference("messages/" + groups + "/"+partner);
-        messageRef.push().setValue(message);
+        DatabaseReference messageRef = mDatabase.getReference("messages/" + groups + "/"+userName); // change userName to partner after dev
+
+        Long time = System.currentTimeMillis();
+        String currentTime = String.valueOf(time);
+
         HashMap<String, String> messageMap = new HashMap<>();
-        messageMap.put("Message","Message");
-        messageMap.put("Time","time");
-        messageMap.put("Reply","true");
+        messageMap.put("message",message);
+        messageMap.put("time",currentTime);
+        messageMap.put("reply","false");
         messageRef.push().setValue(messageMap);
 
     }
@@ -159,24 +164,32 @@ public class MainActivity extends Activity {
     }
 
     public void listenForMsg(){
-        DatabaseReference listenerRef = mDatabase.getReference("messages/" + groups + "/" + userName);
+        DatabaseReference listenerRef = mDatabase.getReference("messages/" + groups + "/" + userName + "/");
         ChildEventListener messageListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
-                String check = dataSnapshot.getValue().toString();
+
+                 //   HashMap<String, String> messageMap = new HashMap<>();
+               //     messageMap = dataSnapshot.getValue();
+                    String message = dataSnapshot.child("message").getValue().toString();
+                    String reply = dataSnapshot.child("reply").getValue().toString();
+                    String time = dataSnapshot.child("time").getValue().toString();
+                    Log.d("9999", message+reply+time);
 
 
-                    messageSender.sendMessage(check);
+                    if(reply.equals("false")){
 
-                    Log.d("6666", "onchildadded: " + check);}
+                    messageSender.sendMessage(message, time, reply);
+
+                    }}
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
                 String check = dataSnapshot.getValue().toString();
-                    messageSender.sendMessage(check);
+            //        messageSender.sendMessage(check);
 
                     Log.d("5555", "onchildchanged: " + check);
             }}

@@ -24,8 +24,8 @@
             android:required="false" />
 
         <activity
-            android:name=".Messages"
-            android:label="messages"></activity>
+            android:name=".Communication"
+            android:label="Communication"></activity>
         <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"></activity>

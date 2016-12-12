@@ -30,11 +30,13 @@ public class DataSenderMobile {
 
     }
 
-    public void sendMessage(String message){
+    public void sendMessage(String message, String time, String reply){
         buildApi();
-        String time = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/"+time);
+        String timer = String.valueOf(System.currentTimeMillis());
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/"+timer);
         putDataMapReq.getDataMap().putString("message", message);
+        putDataMapReq.getDataMap().putString("time", time);
+        putDataMapReq.getDataMap().putString("reply", reply);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
         Log.d("7777", message);

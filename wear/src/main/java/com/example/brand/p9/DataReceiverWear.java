@@ -19,11 +19,16 @@ public class DataReceiverWear extends WearableListenerService {
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+
                 mMessage = dataMap.get("message");
+                String time = dataMap.get("time");
+                String reply = dataMap.get("reply");
                 if(mMessage !=null){
-                    Log.d("6666", mMessage);
-                    Intent intent = new Intent(this, Messages.class);
+                    Log.d("6666", mMessage + time + reply);
+                    Intent intent = new Intent(this, Communication.class);
                     intent.putExtra("message", mMessage);
+                    intent.putExtra("time", time);
+                    intent.putExtra("reply", reply);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
