@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.view.View;
 
 public class WearActivity extends WearableActivity {
@@ -62,7 +63,7 @@ public class WearActivity extends WearableActivity {
                         localStorage.addUserData(System.currentTimeMillis(),"STEP",1);
 
                         DataSenderWear dataSender = new DataSenderWear(context);
-                        dataSender.sendData();
+                        dataSender.syncData();
                     }
                 }
             }

@@ -52,7 +52,6 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         db.insert("USERDATA",null,values);
         db.close();
 
-        Log.d("UPDATED STEP","TRUE");
         updateDaily(unit,day,value,0);
     }
 
@@ -60,13 +59,11 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String query = "UPDATE DAILYDATA SET VALUE = VALUE + "+value+" WHERE USER="+user+" AND UNIT='"+unit+"' AND DAY='"+day+"'";
         db.execSQL(query);
-        Log.d("UPDATED DAILY","TRUE");
     }
 
     public Cursor getUnsentData(){
         SQLiteDatabase db = getReadableDatabase();
         String query = "SELECT * FROM USERDATA WHERE SENT=0";
-
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
     }
@@ -77,6 +74,12 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
+    }
+    public void update(int id, long time){
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "update USERDATA SET SENT = 1 WHERE ID="+id+" AND TIME="+time;
+        db.execSQL(query);
+
     }
 
     //check if a daily entry exists otherwise create one
