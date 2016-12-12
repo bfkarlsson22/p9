@@ -57,7 +57,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             Log.d("TIK","TOK");
 
             DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
-            dataSender.sendData();
+            dataSender.syncData();
 
             LocalStorageWear db = new LocalStorageWear(getApplicationContext());
 
