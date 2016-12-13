@@ -157,43 +157,6 @@ public class MainActivity extends Activity {
         messageRef.push().setValue(messageMap);
     }
 
-    public void getGroupMember(){
-
-        DatabaseReference groupRef = mDatabase.getReference("groups/" + groups + "/members/");
-        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    String ble = dataSnapshot.getValue().toString();
-                    Log.d("9999", ble);
-                    HashMap<String, String> groupMembers;
-                    groupMembers = (HashMap<String, String>) dataSnapshot.getValue();
-                    String m1 = groupMembers.get("m1");
-                    String m2 = groupMembers.get("m2");
-                    Log.d("9999", m1 + " " + m2);
-
-                    if (userName.equals(m1)) {
-                        partner = m2;
-                    } else {
-                        partner = m1;
-                    }
-                    Log.d("9999", partner);
-
-                    if(mReplyMessage !=null){
-                        writeToFB(mReplyMessage, mReplyTime, mReply );
-                    }
-                } else {
-                    getGroupMember();
-                }
-                listenForMsg();
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     public void listenForMsg(){
         DatabaseReference listenerRef = mDatabase.getReference("messages/" + userName + "/");
