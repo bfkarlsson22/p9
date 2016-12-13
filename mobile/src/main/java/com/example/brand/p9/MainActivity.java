@@ -40,6 +40,9 @@ public class MainActivity extends Activity {
     String partner;
     public DataSenderMobile messageSender;
     private Button mButtonNotify;
+    String mReplyMessage;
+    String mReplyTime = "empty";
+    String mReply;
 
 
 
@@ -87,6 +90,20 @@ public class MainActivity extends Activity {
         getUserInfoFromFB();
         getGroupMember();
 
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+               // mReplyMessage = null;
+            } else {
+                mReplyMessage = extras.getString("message");
+                mReplyTime = extras.getString("time");
+              mReply = extras.getString("reply");
+                Log.d("2222", mReplyMessage+mReplyTime+mReply);
+            }
+        } else {
+            mReplyMessage = (String) savedInstanceState.getSerializable("message");
+        }
+
     }
 
     public void getUserInfoFromFB(){
@@ -130,6 +147,16 @@ public class MainActivity extends Activity {
 
     }
 
+    public void writeToFB(String message, String time, String reply){
+
+        DatabaseReference messageRef = mDatabase.getReference("messages/" + groups + "/"+userName); // change userName to partner after dev
+        HashMap<String, String> messageMap = new HashMap<>();
+        messageMap.put("message",message);
+        messageMap.put("time",time);
+        messageMap.put("reply",reply);
+        messageRef.push().setValue(messageMap);
+    }
+
     public void getGroupMember(){
 
         DatabaseReference groupRef = mDatabase.getReference("groups/" + groups + "/members/");
@@ -152,6 +179,10 @@ public class MainActivity extends Activity {
                     }
                     Log.d("9999", partner);
                     listenForMsg();
+
+                    if(mReplyMessage !=null){
+                        writeToFB(mReplyMessage, mReplyTime, mReply );
+                    }
                 } else {
                     getGroupMember();
                 }
@@ -170,19 +201,29 @@ public class MainActivity extends Activity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
 
-                 //   HashMap<String, String> messageMap = new HashMap<>();
-               //     messageMap = dataSnapshot.getValue();
+
                     String message = dataSnapshot.child("message").getValue().toString();
                     String reply = dataSnapshot.child("reply").getValue().toString();
                     String time = dataSnapshot.child("time").getValue().toString();
                     Log.d("9999", message+reply+time);
 
+                    if(!mReplyTime.equals(null) && !mReplyTime.equals(time)){
 
-                    if(reply.equals("false")){
+                    messageSender.sendMessage(message, time, reply);}
+
+
+
+                   /* if(mReplyTime.equals("empty") ){
+                   if(reply.equals("false") || reply.equals("true")){
 
                     messageSender.sendMessage(message, time, reply);
 
-                    }}
+                    }}else{
+                    if(!mReplyTime.equals(time)){
+                        messageSender.sendMessage(message, time, reply);
+                    }
+                    }*/
+                }
             }
 
             @Override
