@@ -75,12 +75,12 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
     }
-    public void update(int id, long time){
+    public void update(int id){
         SQLiteDatabase db = getWritableDatabase();
-        String query = "update USERDATA SET SENT = 1 WHERE ID="+id+" AND TIME="+time;
+        String query = "UPDATE USERDATA SET SENT = 1 WHERE ID="+id;
         db.execSQL(query);
-
     }
+
 
     //check if a daily entry exists otherwise create one
     private void checkDaily() {
@@ -149,6 +149,7 @@ public class LocalStorageWear extends SQLiteOpenHelper {
             writableDatabase.close();
         }
     }
+
 
 
 

@@ -7,6 +7,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by EmilSiegenfeldt on 07/12/2016.
@@ -20,11 +22,12 @@ public class DataSenderMobile {
         this.context = context;
     }
 
-    public void sendData(){
+    public void sendData(String unit, String value){
         buildApi();
         String time = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/"+time);
-        putDataMapReq.getDataMap().putString("RECEIVED AT MOBILE","RECEIVED AT MOBILE");
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/data/"+time);
+        putDataMapReq.getDataMap().putString("UNIT",unit);
+        putDataMapReq.getDataMap().putString("VALUE",value);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
 
@@ -44,11 +47,10 @@ public class DataSenderMobile {
     }
 
 
-    public void callBack(String[] ids){
+    public void callBack(int id){
         buildApi();
-        String time = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/callback");
-        putDataMapReq.getDataMap().putStringArray("Received data ids",ids);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/callback/"+id);
+        putDataMapReq.getDataMap().putString("RECEIVED", String.valueOf(id));
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
     }

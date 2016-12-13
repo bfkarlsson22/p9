@@ -32,7 +32,7 @@ public class DataSenderWear {
 
         if(dataToSend.moveToFirst()){
             do {
-                final Long time = dataToSend.getLong(dataToSend.getColumnIndex("TIME"));
+                Long time = dataToSend.getLong(dataToSend.getColumnIndex("TIME"));
                 String unit = dataToSend.getString(dataToSend.getColumnIndex("UNIT"));
                 float value = dataToSend.getFloat(dataToSend.getColumnIndex("VALUE"));
                 final int id = dataToSend.getInt(dataToSend.getColumnIndex("ID"));
@@ -51,7 +51,7 @@ public class DataSenderWear {
                     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
                         boolean success = dataItemResult.getStatus().isSuccess();
                         if(success){
-                            localStorageWear.update(id,time);
+                            localStorageWear.update(id);
                         }
                     }
                 });

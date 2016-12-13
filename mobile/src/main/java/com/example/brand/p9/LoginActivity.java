@@ -58,7 +58,11 @@ public class LoginActivity extends AppCompatActivity {
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    loadMainActivity();
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    if(user != null){
+                                        loadMainActivity();
+                                    }
+
                                 }
                             })
                             .addOnFailureListener(LoginActivity.this, new OnFailureListener() {

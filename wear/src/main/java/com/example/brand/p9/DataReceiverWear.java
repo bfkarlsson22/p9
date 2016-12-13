@@ -15,10 +15,18 @@ public class DataReceiverWear extends WearableListenerService {
     public String mMessage;
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+        LocalStorageWear localStorageWear = new LocalStorageWear(this);
         for(DataEvent event : dataEvents){
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+
+                Log.d("DATA ITEM",dataItem.toString());
+                Log.d("DATA",dataMap.toString());
+                String path = dataItem.getUri().getPathSegments().get(1);
+                if(path.equals("data")){
+                    Log.d("DATA RECEIVED",dataMap.toString());
+                }
 
                 mMessage = dataMap.get("message");
                 String time = dataMap.get("time");

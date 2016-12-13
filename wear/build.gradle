@@ -25,7 +25,5 @@ dependencies {
     compile 'com.google.android.support:wearable:2.0.0-alpha3'
     compile 'com.google.android.gms:play-services-wearable:10.0.1'
     compile 'com.google.firebase:firebase-database:10.0.1'
-    compile "com.android.support:support-v4:20.0.+"
-
 }
 apply plugin: 'com.google.gms.google-services'

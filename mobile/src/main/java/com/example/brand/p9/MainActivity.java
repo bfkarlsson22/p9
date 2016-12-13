@@ -23,9 +23,6 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
-
-    private int count = 0;
-    public GoogleApiClient mGoogleApiClient;
     private Button sendDB;
     private Button btLogOut;
     Context mContext = this;
@@ -38,8 +35,9 @@ public class MainActivity extends Activity {
     String name;
     String userName;
     String partner;
+    HashMap<String, String> userInfo = new HashMap<>();
+
     public DataSenderMobile messageSender;
-    private Button mButtonNotify;
 
 
 
@@ -48,17 +46,11 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         messageSender = new DataSenderMobile(mContext);
 
         startService(new Intent(this, DataReceiverMobile.class));
-        mButtonNotify = (Button) findViewById(R.id.bNotify);
-        mButtonNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-
-        });
         mAuth = FirebaseAuth.getInstance();
         btLogOut = (Button) findViewById(R.id.btLogOut);
         btLogOut.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +65,23 @@ public class MainActivity extends Activity {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if(user == null){
                     loadLoginActivity();
+                } else {
+                    DatabaseReference userRef = mDatabase.getReference("user/"+user.getUid());
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot data : dataSnapshot.getChildren()){
+                                userInfo.put(data.getKey(),data.getValue().toString());
+                            }
+                            listenForSteps();
+                            Log.d("USER INFO",userInfo.toString());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         };
@@ -84,13 +93,11 @@ public class MainActivity extends Activity {
 
             }
         });
-        getUserInfoFromFB();
-        getGroupMember();
+        //getUserInfoFromFB();
+        //getGroupMember();
 
     }
-
     public void getUserInfoFromFB(){
-
 
             String userName1 = mAuth.getCurrentUser().getEmail();
             String parts[] = userName1.split("@");
@@ -152,6 +159,7 @@ public class MainActivity extends Activity {
                     }
                     Log.d("9999", partner);
                     listenForMsg();
+                    listenForSteps();
                 } else {
                     getGroupMember();
                 }
@@ -214,24 +222,20 @@ public class MainActivity extends Activity {
 
     }
 
-    public void sendSteps(){
-        int steps = 1;
-        DatabaseReference stepRef = mDatabase.getReference("steps/"+userName);
-        stepRef.push().setValue(steps);
-    }
-
-    public void sendActiveMinutes(){
-        int min = 1;
-        DatabaseReference minRef = mDatabase.getReference("active minutes/"+userName);
-        minRef.push().setValue(min);
-    }
-
     public void listenForSteps(){
-        DatabaseReference stepListenerRef = mDatabase.getReference("steps/" + partner);
+        Log.d("USER INFO",userInfo.toString());
+        //Log.d("PARTNER",userInfo.get("Partner"));
+        DatabaseReference stepListenerRef = mDatabase.getReference("steps/"+userInfo.get("Partner"));
         ChildEventListener stepListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d("STEP",dataSnapshot.toString());
+                Log.d("STEP","STEP");
+                //String unit = dataSnapshot.child("UNIT").getValue().toString();
+                //String value = dataSnapshot.child("VALUE").getValue().toString();
 
+                //DataSenderMobile dataSenderMobile = new DataSenderMobile(mContext);
+                //dataSenderMobile.sendData(unit,value);
             }
 
             @Override
