@@ -1,16 +1,13 @@
 package com.example.brand.p9;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -18,6 +15,7 @@ import com.google.android.gms.wearable.Wearable;
 public class DataSenderWear {
     private Context context;
     private GoogleApiClient googleApiClient;
+
 
     public DataSenderWear(Context context) {
         this.context = context;
@@ -58,6 +56,18 @@ public class DataSenderWear {
 
             } while (dataToSend.moveToNext());
         }
+    }
+
+    public void sendReply(String message, String time, String reply){
+        buildApi();
+        String timer = String.valueOf(System.currentTimeMillis());
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/reply/"+timer);
+        putDataMapReq.getDataMap().putString("message", message);
+        putDataMapReq.getDataMap().putString("time", time);
+        putDataMapReq.getDataMap().putString("reply", reply);
+        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
+        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
+        Log.d("8888", message+time+reply);
     }
 
     public void buildApi(){

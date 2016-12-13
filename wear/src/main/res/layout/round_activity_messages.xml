@@ -24,7 +24,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bLike"
+        android:id="@+id/bILike"
         android:src="@drawable/like"
         android:visibility="invisible"
 
@@ -32,7 +32,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bDisLike"
+        android:id="@+id/bIDisLike"
         android:src="@drawable/dislike"
         android:visibility="invisible"
 

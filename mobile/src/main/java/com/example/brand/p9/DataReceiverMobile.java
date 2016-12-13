@@ -19,6 +19,9 @@ public class DataReceiverMobile extends WearableListenerService {
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     FirebaseAuth fireBaseAuth = FirebaseAuth.getInstance();
 
+
+    public String mMessage;
+
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         Context context = this;
@@ -29,9 +32,24 @@ public class DataReceiverMobile extends WearableListenerService {
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
                 String path = dataItem.getUri().getPathSegments().get(1);
 
-                if(path.equals("data")){
-                    dataHandler(context, dataMap);
-                } else if(path.equals("callback")){
+                mMessage = dataMap.get("message");
+                String time = dataMap.get("time");
+                String reply = dataMap.get("reply");
+                Log.d("6666", "reply: "+reply);
+                if(mMessage !=null){
+                    Log.d("4444", mMessage + time + reply);
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("message", mMessage);
+                    intent.putExtra("time", time);
+                    intent.putExtra("reply", reply);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+
+                if(action.equals("data")){
+                    dataHandler(dataMap);
+                } else if(action.equals("callback")){
                     callback();
                 }
             }
@@ -56,9 +74,8 @@ public class DataReceiverMobile extends WearableListenerService {
 
         //SEND A CALLBACK THAT THE DATA HAS BEEN RECEIVED
         DataSenderMobile dataSenderMobile = new DataSenderMobile(context);
-        dataSenderMobile.callBack(data.getInt("ID"));
-
-        }
+        dataSenderMobile.sendData();*/
+    }
     public void callback(){
 
     }

@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
-import android.util.Log;
 import android.view.View;
 
 public class WearActivity extends WearableActivity {
@@ -19,6 +18,7 @@ public class WearActivity extends WearableActivity {
     public SensorEventListener mStepListener;
     Context context;
     public DataReceiverWear messageReceiver;
+    private OnSwipeTouchListener mOnSwipeTouchListener;
 
 
     @Override
@@ -29,18 +29,34 @@ public class WearActivity extends WearableActivity {
         startService(new Intent(this, DataReceiverWear.class));
         context = this;
         messageReceiver = new DataReceiverWear();
+       // mOnSwipeTouchListener = new OnSwipeTouchListener(WearActivity.this);
+
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 setupWidgets();
+                stub.setOnTouchListener(new OnSwipeTouchListener(context){
+                    @Override
+                    public void onSwipeLeft(){
+                        Intent intent = new Intent(WearActivity.this, TestActivity.class);
+                        startActivity(intent);
+                    }
+                    @Override
+                    public void onSwipeRight(){
+
+                    }
+                });
             }
 
 
         });
         setUpStepCounter();
+
+
     }
+
     public void setupWidgets() {
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,4 +89,7 @@ public class WearActivity extends WearableActivity {
         };
         mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
+
+
+
 }

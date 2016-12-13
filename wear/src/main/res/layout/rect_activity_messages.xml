@@ -23,24 +23,41 @@
         android:id="@+id/tv2"/>
 
     <ImageButton
+        android:id="@+id/bIDisLike"
+
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/bLike"
         android:src="@drawable/like"
         android:visibility="invisible"
-        android:layout_below="@+id/tv1"
-        android:layout_toStartOf="@+id/tv2"
-        android:layout_marginTop="18dp"/>
+        android:layout_toEndOf="@+id/tv2"/>
 
     <ImageButton
-        android:id="@+id/bDisLike"
-
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:id="@+id/bILike"
         android:src="@drawable/like"
         android:visibility="invisible"
-        android:layout_alignTop="@+id/bLike"
-        android:layout_toEndOf="@+id/tv2"/>
+        android:scaleType="fitCenter"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/bIDisLike"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bLike2"
+        android:text="Like"
+        android:visibility="invisible"
+        android:layout_below="@+id/bILike"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bDislike2"
+        android:text="Dislike"
+        android:visibility="invisible"
+        android:layout_below="@+id/bILike"
+        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>
