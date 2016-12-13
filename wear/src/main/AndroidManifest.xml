@@ -24,9 +24,13 @@
         <uses-library
             android:name="com.google.android.wearable"
             android:required="false" />
-
         <activity
-            android:name=".Communication"
+            android:name=".SendMsg"
+            android:label="SendMsg"
+            android:theme="@style/Theme.Wearable.Modal"
+            ></activity>
+        <activity
+            android:name=".ReadReply"
             android:label="Communication"></activity>
         <activity
             android:name=".TestActivity"

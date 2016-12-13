@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -23,36 +22,23 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
-
-    private int count = 0;
-    public GoogleApiClient mGoogleApiClient;
     private Button sendDB;
     private Button btLogOut;
     Context mContext = this;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    String uid;
-    String email;
-    String groups;
     String name;
     String userName;
     String partner;
     public DataSenderMobile messageSender;
     private Button mButtonNotify;
-    String mReplyMessage;
-    String mReplyTime = "empty";
-    String mReply;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         messageSender = new DataSenderMobile(mContext);
-
         startService(new Intent(this, DataReceiverMobile.class));
         mButtonNotify = (Button) findViewById(R.id.bNotify);
         mButtonNotify.setOnClickListener(new View.OnClickListener() {
@@ -90,21 +76,6 @@ public class MainActivity extends Activity {
         getUserInfoFromFB();
         listenForMsg();
 
-
-        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras == null) {
-               // mReplyMessage = null;
-            } else {
-                mReplyMessage = extras.getString("message");
-                mReplyTime = extras.getString("time");
-                mReply = extras.getString("reply");
-                Log.d("2222", mReplyMessage+mReplyTime+mReply);
-                writeToFB(mReplyMessage, mReplyTime, mReply);
-            }
-        } else {
-            mReplyMessage = (String) savedInstanceState.getSerializable("message");
-        }
 
     }
 
@@ -157,44 +128,25 @@ public class MainActivity extends Activity {
         messageRef.push().setValue(messageMap);
     }
 
-
     public void listenForMsg(){
         DatabaseReference listenerRef = mDatabase.getReference("messages/" + userName + "/");
         ChildEventListener messageListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
-
-
                     String message = dataSnapshot.child("message").getValue().toString();
                     String reply = dataSnapshot.child("reply").getValue().toString();
                     String time = dataSnapshot.child("time").getValue().toString();
                     Log.d("9999", message+reply+time);
 
-                    if(!mReplyTime.equals(null) && !mReplyTime.equals(time)){
+                    messageSender.sendMessage(message, time, reply, userName, partner);}
 
-                    messageSender.sendMessage(message, time, reply);}
-
-
-
-                   /* if(mReplyTime.equals("empty") ){
-                   if(reply.equals("false") || reply.equals("true")){
-
-                    messageSender.sendMessage(message, time, reply);
-
-                    }}else{
-                    if(!mReplyTime.equals(time)){
-                        messageSender.sendMessage(message, time, reply);
-                    }
-                    }*/
-                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
                 String check = dataSnapshot.getValue().toString();
-            //        messageSender.sendMessage(check);
 
                     Log.d("5555", "onchildchanged: " + check);
             }}

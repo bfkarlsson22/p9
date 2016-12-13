@@ -18,9 +18,6 @@ public class WearActivity extends WearableActivity {
     public SensorEventListener mStepListener;
     Context context;
     public DataReceiverWear messageReceiver;
-    private OnSwipeTouchListener mOnSwipeTouchListener;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +26,6 @@ public class WearActivity extends WearableActivity {
         startService(new Intent(this, DataReceiverWear.class));
         context = this;
         messageReceiver = new DataReceiverWear();
-       // mOnSwipeTouchListener = new OnSwipeTouchListener(WearActivity.this);
-
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -40,12 +35,12 @@ public class WearActivity extends WearableActivity {
                 stub.setOnTouchListener(new OnSwipeTouchListener(context){
                     @Override
                     public void onSwipeLeft(){
-                        Intent intent = new Intent(WearActivity.this, TestActivity.class);
-                        startActivity(intent);
+
                     }
                     @Override
                     public void onSwipeRight(){
-
+                        Intent intent = new Intent(WearActivity.this, SendMsg.class);
+                        startActivity(intent);
                     }
                 });
             }
@@ -53,8 +48,6 @@ public class WearActivity extends WearableActivity {
 
         });
         setUpStepCounter();
-
-
     }
 
     public void setupWidgets() {

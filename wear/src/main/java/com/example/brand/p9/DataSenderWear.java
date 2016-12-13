@@ -58,13 +58,15 @@ public class DataSenderWear {
         }
     }
 
-    public void sendReply(String message, String time, String reply){
+    public void sendReply(String message, String time, String reply, String userUID, String partnerUID){
         buildApi();
         String timer = String.valueOf(System.currentTimeMillis());
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/reply/"+timer);
         putDataMapReq.getDataMap().putString("message", message);
         putDataMapReq.getDataMap().putString("time", time);
         putDataMapReq.getDataMap().putString("reply", reply);
+        putDataMapReq.getDataMap().putString("userUID", userUID);
+        putDataMapReq.getDataMap().putString("partnerUID", partnerUID);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
         Log.d("8888", message+time+reply);
