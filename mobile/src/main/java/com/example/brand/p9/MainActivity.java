@@ -46,7 +46,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         messageSender = new DataSenderMobile(mContext);
 
         startService(new Intent(this, DataReceiverMobile.class));
@@ -95,24 +94,41 @@ public class MainActivity extends Activity {
         });
         //getUserInfoFromFB();
         //getGroupMember();
+        getUserInfoFromFB();
+        listenForMsg();
+
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+               // mReplyMessage = null;
+            } else {
+                mReplyMessage = extras.getString("message");
+                mReplyTime = extras.getString("time");
+                mReply = extras.getString("reply");
+                Log.d("2222", mReplyMessage+mReplyTime+mReply);
+                writeToFB(mReplyMessage, mReplyTime, mReply);
+            }
+        } else {
+            mReplyMessage = (String) savedInstanceState.getSerializable("message");
+        }
 
     }
     public void getUserInfoFromFB(){
 
-            String userName1 = mAuth.getCurrentUser().getEmail();
-            String parts[] = userName1.split("@");
-            String user = parts[0];
-            DatabaseReference userRef = mDatabase.getReference("user/" + user);
+
+            userName = mAuth.getCurrentUser().getUid().toString();
+
+            DatabaseReference userRef = mDatabase.getReference("user/" + userName );
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    name = user.getName();
-                    email = user.getEmail();
-                    uid = user.getUid();
-                    groups = user.getGroups();
-                    userName = user.getUsername();
-                    Log.d("9999", name + " " + email + " " + uid + " " + groups + " " + userName);
+
+                    name = dataSnapshot.child("Name").getValue().toString();
+                    partner = dataSnapshot.child("Partner").getValue().toString();
+                    Log.d("7777", name+partner);
+
+
                 }
 
                 @Override
@@ -124,7 +140,7 @@ public class MainActivity extends Activity {
     public void writeMessage(){
 
         String message = "Good job Brandur, this message stuff is awesome";
-        DatabaseReference messageRef = mDatabase.getReference("messages/" + groups + "/"+userName); // change userName to partner after dev
+        DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
 
         Long time = System.currentTimeMillis();
         String currentTime = String.valueOf(time);
@@ -135,6 +151,16 @@ public class MainActivity extends Activity {
         messageMap.put("reply","false");
         messageRef.push().setValue(messageMap);
 
+    }
+
+    public void writeToFB(String message, String time, String reply){
+
+        DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
+        HashMap<String, String> messageMap = new HashMap<>();
+        messageMap.put("message",message);
+        messageMap.put("time",time);
+        messageMap.put("reply",reply);
+        messageRef.push().setValue(messageMap);
     }
 
     public void getGroupMember(){
@@ -158,11 +184,15 @@ public class MainActivity extends Activity {
                         partner = m1;
                     }
                     Log.d("9999", partner);
-                    listenForMsg();
-                    listenForSteps();
+
+                    if(mReplyMessage !=null){
+                        writeToFB(mReplyMessage, mReplyTime, mReply );
+                    }
                 } else {
                     getGroupMember();
                 }
+                listenForMsg();
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -172,25 +202,35 @@ public class MainActivity extends Activity {
     }
 
     public void listenForMsg(){
-        DatabaseReference listenerRef = mDatabase.getReference("messages/" + groups + "/" + userName + "/");
+        DatabaseReference listenerRef = mDatabase.getReference("messages/" + userName + "/");
         ChildEventListener messageListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null){
 
-                 //   HashMap<String, String> messageMap = new HashMap<>();
-               //     messageMap = dataSnapshot.getValue();
+
                     String message = dataSnapshot.child("message").getValue().toString();
                     String reply = dataSnapshot.child("reply").getValue().toString();
                     String time = dataSnapshot.child("time").getValue().toString();
                     Log.d("9999", message+reply+time);
 
+                    if(!mReplyTime.equals(null) && !mReplyTime.equals(time)){
 
-                    if(reply.equals("false")){
+                    messageSender.sendMessage(message, time, reply);}
+
+
+
+                   /* if(mReplyTime.equals("empty") ){
+                   if(reply.equals("false") || reply.equals("true")){
 
                     messageSender.sendMessage(message, time, reply);
 
-                    }}
+                    }}else{
+                    if(!mReplyTime.equals(time)){
+                        messageSender.sendMessage(message, time, reply);
+                    }
+                    }*/
+                }
             }
 
             @Override
