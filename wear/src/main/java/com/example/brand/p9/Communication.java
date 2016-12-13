@@ -28,6 +28,7 @@ public class Communication extends WearableActivity {
     Button mLike;
     Button mDislike;
     private DataSenderWear mReplySender;
+    String repliedMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class Communication extends WearableActivity {
                         }
                     });
 
-                }else{mTextView.setText("Your partner has replied to your message: " + reply);}
+                }else{mTextView.setText("Your partner has replied to your message: " + messages);}
 
             }
 
