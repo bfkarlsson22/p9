@@ -45,6 +45,18 @@ public class DataSenderMobile {
 
     }
 
+    public void sendUserInfo(String userUID, String partnerUID){
+        buildApi();
+        String timer = String.valueOf(System.currentTimeMillis());
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/"+timer);
+        putDataMapReq.getDataMap().putString("userUID", userUID);
+        putDataMapReq.getDataMap().putString("partnerUID", partnerUID);
+        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
+        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
+        Log.d("7777", "sendUSerInfo: " +userUID+partnerUID);
+
+    }
+
 
 
 

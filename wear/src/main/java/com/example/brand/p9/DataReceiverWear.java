@@ -13,6 +13,7 @@ import com.google.android.gms.wearable.WearableListenerService;
 public class DataReceiverWear extends WearableListenerService {
 
     public String mMessage;
+    public String mUserUID;
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
@@ -23,7 +24,7 @@ public class DataReceiverWear extends WearableListenerService {
                 mMessage = dataMap.get("message");
                 String time = dataMap.get("time");
                 String reply = dataMap.get("reply");
-                String userId = dataMap.get("userUID");
+                mUserUID = dataMap.get("userUID");
                 String partnerId = dataMap.get("partnerUID");
                 if(mMessage !=null){
                     Log.d("6666", mMessage + time + reply);
@@ -31,15 +32,22 @@ public class DataReceiverWear extends WearableListenerService {
                     intent.putExtra("message", mMessage);
                     intent.putExtra("time", time);
                     intent.putExtra("reply", reply);
-                    intent.putExtra("userUID", userId);
+                    intent.putExtra("userUID", mUserUID);
                     intent.putExtra("partnerUID", partnerId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                }
+                if(mUserUID !=null){
+                    Log.d("7878", "userIdSigned:" + mUserUID);
                 }
             }
         }
     }
 
+    public String getUserUID(){
+        Log.d("7878", "userIdmethod: " + mUserUID);
+        return mUserUID;
+    }
 
 
 }

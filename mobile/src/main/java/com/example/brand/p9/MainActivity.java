@@ -81,9 +81,7 @@ public class MainActivity extends Activity {
 
     public void getUserInfoFromFB(){
 
-
             userName = mAuth.getCurrentUser().getUid().toString();
-
             DatabaseReference userRef = mDatabase.getReference("user/" + userName );
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -92,7 +90,7 @@ public class MainActivity extends Activity {
                     name = dataSnapshot.child("Name").getValue().toString();
                     partner = dataSnapshot.child("Partner").getValue().toString();
                     Log.d("7777", name+partner);
-
+                    messageSender.sendUserInfo(userName, partner);
 
                 }
 
@@ -107,6 +105,18 @@ public class MainActivity extends Activity {
         String message = "Good job Brandur, this message stuff is awesome";
         DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
 
+        Long time = System.currentTimeMillis();
+        String currentTime = String.valueOf(time);
+
+        HashMap<String, String> messageMap = new HashMap<>();
+        messageMap.put("message",message);
+        messageMap.put("time",currentTime);
+        messageMap.put("reply","false");
+        messageRef.push().setValue(messageMap);
+
+    }
+    public void writeMessage2(String message, String reply){
+        DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
         Long time = System.currentTimeMillis();
         String currentTime = String.valueOf(time);
 

@@ -22,6 +22,7 @@ public class DataReceiverMobile extends WearableListenerService {
     String userUID;
 
 
+
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         Log.d("DATA CHANGED","TRUE");
@@ -31,24 +32,24 @@ public class DataReceiverMobile extends WearableListenerService {
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
                 List<String> path = dataItem.getUri().getPathSegments();
                 String action = path.get(1);
-
                 mMessage = dataMap.get("message");
                 String time = dataMap.get("time");
                 String reply = dataMap.get("reply");
                 userUID = dataMap.get("userUID");
                 partnerUID = dataMap.get("partnerUID");
+                String sendMessage = dataMap.get("sendMessage");
+                String sendTime = dataMap.get("sendTime");
+                String sendReply = dataMap.get("sendReply");
                 Log.d("6666", "reply: "+reply);
                 if(mMessage !=null){
+                    writeToFB(mMessage, reply, userUID); // change to partnerID after dev
+                }
 
-                    writeToFB(mMessage, time, reply, userUID); // change to partnerID after dev
+                if(sendMessage !=null){
+                    Log.d("4545", sendMessage+sendTime+sendReply);
 
-                   /* Log.d("4444", mMessage + time + reply);
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.putExtra("message", mMessage);
-                    intent.putExtra("time", time);
-                    intent.putExtra("reply", reply);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);*/
+                    writeToFB(sendMessage, sendReply, userUID);
+
                 }
 
                 if(action.equals("data")){
@@ -69,12 +70,15 @@ public class DataReceiverMobile extends WearableListenerService {
 
     }
 
-    public void writeToFB(String message, String time, String reply, String partnerUID){
 
+    public void writeToFB(String message, String reply, String partnerUID){
+
+        Long time = System.currentTimeMillis();
+        String currentTime = String.valueOf(time);
         DatabaseReference messageRef = mDatabase.getReference("messages/" +partnerUID); // change userName to partner after dev
         HashMap<String, String> messageMap = new HashMap<>();
         messageMap.put("message",message);
-        messageMap.put("time",time);
+        messageMap.put("time",currentTime);
         messageMap.put("reply",reply);
         messageRef.push().setValue(messageMap);
     }

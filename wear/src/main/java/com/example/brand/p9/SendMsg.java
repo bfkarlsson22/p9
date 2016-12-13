@@ -3,10 +3,13 @@ package com.example.brand.p9;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
+import android.support.wearable.view.DelayedConfirmationView;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,15 +19,20 @@ import java.util.List;
  * Created by brand on 12/13/2016.
  */
 
-public class SendMsg extends WearableActivity implements WearableListView.ClickListener {
+public class SendMsg extends WearableActivity implements WearableListView.ClickListener, DelayedConfirmationView.DelayedConfirmationListener {
 
     private TextView mTextView;
     private Context mContext = this;
     private WearableListView listView;
     String message0 = "I'm going for a walk";
-    String message1= "Good job today";
-    String message2="I'm almost done";
-    String message3="Keep up the work";
+    String message1 = "Good job today";
+    String message2 = "I'm almost done";
+    String message3 = "Keep up the work";
+    private DataSenderWear mMessageSender;
+    private DelayedConfirmationView mDelayedView;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,26 +42,36 @@ public class SendMsg extends WearableActivity implements WearableListView.ClickL
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                stub.setOnTouchListener(new OnSwipeTouchListener(mContext){
+                stub.setOnTouchListener(new OnSwipeTouchListener(mContext) {
                     @Override
-                    public void onSwipeLeft(){
+                    public void onSwipeLeft() {
                         Intent intent = new Intent(SendMsg.this, WearActivity.class);
                         startActivity(intent);
                     }
+
                     @Override
-                    public void onSwipeRight(){
+                    public void onSwipeRight() {
 
                     }
                 });
                 listView = (WearableListView) stub.findViewById(R.id.sample_list_view);
                 loadAdapter();
+                mDelayedView =
+                        (DelayedConfirmationView) stub.findViewById(R.id.delayed_confirm);
+                mDelayedView.setListener(SendMsg.this);
+                mDelayedView.setTotalTimeMs(3000);
+                mDelayedView.start();
+
 
             }
 
 
-    });
+        });
+
+        mMessageSender = new DataSenderWear(mContext);
 
     }
+
     private void loadAdapter() {
         List<SettingsItems> items = new ArrayList<>();
         items.add(new SettingsItems(R.drawable.image, message0));
@@ -74,21 +92,27 @@ public class SendMsg extends WearableActivity implements WearableListView.ClickL
     public void onClick(WearableListView.ViewHolder viewHolder) {
         switch (viewHolder.getPosition()) {
             case 0:
-                //Do something
-                Log.d("9999", "click");
+                mMessageSender.sendMsgtoPhone(message0, "false");
+                confirmationActivity();
                 break;
             case 1:
-                //Do something else
+                mMessageSender.sendMsgtoPhone(message1, "false");
+                confirmationActivity();
+
                 Log.d("9999", "click2");
 
                 break;
             case 2:
-                //Do something else
+                mMessageSender.sendMsgtoPhone(message2, "false");
+                confirmationActivity();
+
                 Log.d("9999", "click3");
 
                 break;
             case 3:
-                //Do something else
+                mMessageSender.sendMsgtoPhone(message3, "false");
+                confirmationActivity();
+
                 Log.d("9999", "click4");
 
                 break;
@@ -98,6 +122,32 @@ public class SendMsg extends WearableActivity implements WearableListView.ClickL
     @Override
     public void onTopEmptyRegionClick() {
         //Prevent NullPointerException
+        mDelayedView.start();
+
+    }
+
+    @Override
+    public void onTimerFinished(View view) {
+        Log.d("9999", "ontime");
+        mDelayedView.start();
+
+
+    }
+
+    @Override
+    public void onTimerSelected(View view) {
+        mDelayedView.start();
+
+        Log.d("9999", "cancel");
+
+    }
+
+    public void confirmationActivity(){
+        Intent intent = new Intent(this, ConfirmationActivity.class);
+        intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                ConfirmationActivity.SUCCESS_ANIMATION);
+        intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE,
+                "Message sent");
+        startActivity(intent);
     }
 }
-
