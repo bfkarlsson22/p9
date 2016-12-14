@@ -34,6 +34,8 @@ public class DataReceiverWear extends WearableListenerService {
                     storeSettings(context, dataMap);
                 } else if(action.equals("message")){
                     message(dataMap);
+                } else if(action.equals("data")){
+                    dataHandler(context, dataMap);
                 }
 
 
@@ -41,10 +43,6 @@ public class DataReceiverWear extends WearableListenerService {
         }
     }
 
-    public String getUserUID(){
-        Log.d("7878", "userIdmethod: " + mUserUID);
-        return mUserUID;
-    }
     public void storeSettings(Context context, DataMap dataMap){
         String UID = dataMap.getString("UID");
         String partnerId = dataMap.getString("PARTNERID");
@@ -76,6 +74,9 @@ public class DataReceiverWear extends WearableListenerService {
         if(mUserUID !=null){
             Log.d("7878", "userIdSigned:" + mUserUID);
         }
+    }
+    public void dataHandler(Context context, DataMap dataMap){
+
     }
 
 

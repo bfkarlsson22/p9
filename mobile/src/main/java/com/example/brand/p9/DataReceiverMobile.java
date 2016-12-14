@@ -57,6 +57,10 @@ public class DataReceiverMobile extends WearableListenerService {
                     dataHandler(dataMap);
                 } else if(action.equals("callback")){
                     callback();
+                } else if(action.equals("message")){
+                    messageHandler(dataMap);
+                } else if(action.equals("reply")){
+                    replyHandler(dataMap);
                 }
             }
         }
@@ -82,6 +86,13 @@ public class DataReceiverMobile extends WearableListenerService {
         messageMap.put("time",currentTime);
         messageMap.put("reply",reply);
         messageRef.push().setValue(messageMap);
+    }
+
+    public void messageHandler(DataMap dataMap){
+
+    }
+    public void replyHandler(DataMap dataMap){
+
     }
 
 }
