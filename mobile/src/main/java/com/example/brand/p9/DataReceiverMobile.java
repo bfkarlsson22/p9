@@ -33,25 +33,12 @@ public class DataReceiverMobile extends WearableListenerService {
                 List<String> path = dataItem.getUri().getPathSegments();
                 String action = path.get(1);
 
-                mMessage = dataMap.get("message");
-                String time = dataMap.get("time");
-                String reply = dataMap.get("reply");
-                userUID = dataMap.get("userUID");
-                partnerUID = dataMap.get("partnerUID");
 
-                String sendMessage = dataMap.get("sendMessage");
-                String sendTime = dataMap.get("sendTime");
-                String sendReply = dataMap.get("sendReply");
-                Log.d("6666", "reply: "+reply);
 
-                if(mMessage !=null){
-                    writeToFB(mMessage, reply, userUID); // change to partnerID after dev
-                }
 
-                if(sendMessage !=null){
-                    Log.d("4545", sendMessage+sendTime+sendReply);
-                    writeToFB(sendMessage, sendReply, userUID);
-                }
+
+
+
 
                 if(action.equals("data")){
                     dataHandler(dataMap);
@@ -89,10 +76,26 @@ public class DataReceiverMobile extends WearableListenerService {
     }
 
     public void messageHandler(DataMap dataMap){
+        mMessage = dataMap.get("message");
+        String time = dataMap.get("time");
+        String reply = dataMap.get("reply");
+        userUID = dataMap.get("userUID");
+        partnerUID = dataMap.get("partnerUID");
 
+        if(mMessage !=null) {
+            writeToFB(mMessage, reply, userUID); // change to partnerID after dev
+        }
+
+            String sendMessage = dataMap.get("sendMessage");
+            String sendTime = dataMap.get("sendTime");
+            String sendReply = dataMap.get("sendReply");
+            if(sendMessage !=null){
+                Log.d("4545", sendMessage+sendTime+sendReply);
+                writeToFB(sendMessage, sendReply, userUID);
+        }
     }
     public void replyHandler(DataMap dataMap){
 
+        }
     }
 
-}

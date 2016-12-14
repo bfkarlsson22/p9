@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
-import android.support.wearable.view.DelayedConfirmationView;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,7 +17,7 @@ import java.util.List;
  * Created by brand on 12/13/2016.
  */
 
-public class SendMsgActivity extends WearableActivity implements WearableListView.ClickListener, DelayedConfirmationView.DelayedConfirmationListener {
+public class SendMsgActivity extends WearableActivity implements WearableListView.ClickListener {
 
     private TextView mTextView;
     private Context mContext = this;
@@ -29,7 +27,7 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
     String message2 = "I'm almost done";
     String message3 = "Keep up the work";
     private DataSenderWear mMessageSender;
-    private DelayedConfirmationView mDelayedView;
+
 
 
 
@@ -56,11 +54,7 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
                 });
                 listView = (WearableListView) stub.findViewById(R.id.sample_list_view);
                 loadAdapter();
-                mDelayedView =
-                        (DelayedConfirmationView) stub.findViewById(R.id.delayed_confirm);
-                mDelayedView.setListener(SendMsgActivity.this);
-                mDelayedView.setTotalTimeMs(3000);
-                mDelayedView.start();
+
 
 
             }
@@ -122,25 +116,9 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
     @Override
     public void onTopEmptyRegionClick() {
         //Prevent NullPointerException
-        mDelayedView.start();
 
     }
 
-    @Override
-    public void onTimerFinished(View view) {
-        Log.d("9999", "ontime");
-        mDelayedView.start();
-
-
-    }
-
-    @Override
-    public void onTimerSelected(View view) {
-        mDelayedView.start();
-
-        Log.d("9999", "cancel");
-
-    }
 
     public void confirmationActivity(){
         Intent intent = new Intent(this, ConfirmationActivity.class);

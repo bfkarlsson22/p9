@@ -14,13 +14,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/sample_list_view" />
-    <android.support.wearable.view.DelayedConfirmationView
-        android:id="@+id/delayed_confirm"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/cancel_circle"
-        app:circle_border_color="@color/white"
-        app:circle_border_width="4dp"
-        app:circle_radius="16dp">
-    </android.support.wearable.view.DelayedConfirmationView>
+
 </LinearLayout>

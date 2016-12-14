@@ -60,7 +60,7 @@ public class DataSenderWear {
     public void sendReply(String message, String time, String reply, String userUID, String partnerUID){
         buildApi();
         String timer = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/reply/"+timer);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/message/"+timer);
         putDataMapReq.getDataMap().putString("message", message);
         putDataMapReq.getDataMap().putString("time", time);
         putDataMapReq.getDataMap().putString("reply", reply);
