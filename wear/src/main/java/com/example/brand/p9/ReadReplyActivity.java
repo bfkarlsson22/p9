@@ -14,7 +14,7 @@ import android.widget.TextView;
  * Created by brand on 12/8/2016.
  */
 
-public class ReadReply extends WearableActivity {
+public class ReadReplyActivity extends WearableActivity {
 
     TextView mTextView;
     TextView mTextTime;
@@ -92,7 +92,7 @@ public class ReadReply extends WearableActivity {
                         Long time = System.currentTimeMillis();
                         String currentTime = String.valueOf(time);
                         mReplySender.sendReply(message, currentTime, reply, userUID, partnerUID);
-                        Intent intent = new Intent(ReadReply.this, WearActivity.class);
+                        Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -105,7 +105,7 @@ public class ReadReply extends WearableActivity {
                         Long time = System.currentTimeMillis();
                         String currentTime = String.valueOf(time);
                         mReplySender.sendReply(message, currentTime, reply, userUID, partnerUID);
-                        Intent intent = new Intent(ReadReply.this, WearActivity.class);
+                        Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -120,7 +120,7 @@ public class ReadReply extends WearableActivity {
         mTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Intent intent = new Intent(ReadReply.this, WearActivity.class);
+                Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
                 startActivity(intent);
                 return false;
             }

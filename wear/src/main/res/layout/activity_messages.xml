@@ -7,5 +7,5 @@
                                              android:layout_height="match_parent"
                                              app:rectLayout="@layout/rect_activity_messages"
                                              app:roundLayout="@layout/round_activity_messages"
-                                             tools:context="com.example.brand.p9.ReadReply"
+                                             tools:context="com.example.brand.p9.ReadReplyActivity"
                                              tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>

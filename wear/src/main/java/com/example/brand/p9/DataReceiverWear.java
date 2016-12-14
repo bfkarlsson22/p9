@@ -41,7 +41,7 @@ public class DataReceiverWear extends WearableListenerService {
                 String partnerId = dataMap.get("partnerUID");
                 if(mMessage !=null){
                     Log.d("6666", mMessage + time + reply);
-                    Intent intent = new Intent(this, ReadReply.class);
+                    Intent intent = new Intent(this, ReadReplyActivity.class);
                     intent.putExtra("message", mMessage);
                     intent.putExtra("time", time);
                     intent.putExtra("reply", reply);

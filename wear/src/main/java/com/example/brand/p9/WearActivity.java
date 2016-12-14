@@ -37,7 +37,7 @@ public class WearActivity extends WearableActivity {
                     }
                     @Override
                     public void onSwipeRight(){
-                        Intent intent = new Intent(WearActivity.this, SendMsg.class);
+                        Intent intent = new Intent(WearActivity.this, SendMsgActivity.class);
                         startActivity(intent);
                     }
                 });

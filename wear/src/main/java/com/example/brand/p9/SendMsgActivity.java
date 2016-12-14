@@ -19,7 +19,7 @@ import java.util.List;
  * Created by brand on 12/13/2016.
  */
 
-public class SendMsg extends WearableActivity implements WearableListView.ClickListener, DelayedConfirmationView.DelayedConfirmationListener {
+public class SendMsgActivity extends WearableActivity implements WearableListView.ClickListener, DelayedConfirmationView.DelayedConfirmationListener {
 
     private TextView mTextView;
     private Context mContext = this;
@@ -45,7 +45,7 @@ public class SendMsg extends WearableActivity implements WearableListView.ClickL
                 stub.setOnTouchListener(new OnSwipeTouchListener(mContext) {
                     @Override
                     public void onSwipeLeft() {
-                        Intent intent = new Intent(SendMsg.this, WearActivity.class);
+                        Intent intent = new Intent(SendMsgActivity.this, WearActivity.class);
                         startActivity(intent);
                     }
 
@@ -58,7 +58,7 @@ public class SendMsg extends WearableActivity implements WearableListView.ClickL
                 loadAdapter();
                 mDelayedView =
                         (DelayedConfirmationView) stub.findViewById(R.id.delayed_confirm);
-                mDelayedView.setListener(SendMsg.this);
+                mDelayedView.setListener(SendMsgActivity.this);
                 mDelayedView.setTotalTimeMs(3000);
                 mDelayedView.start();
 

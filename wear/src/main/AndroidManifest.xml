@@ -25,13 +25,13 @@
             android:name="com.google.android.wearable"
             android:required="false" />
         <activity
-            android:name=".SendMsg"
+            android:name=".SendMsgActivity"
             android:label="SendMsg"
             android:theme="@style/Theme.Wearable.Modal"
             ></activity>
         <activity android:name="android.support.wearable.activity.ConfirmationActivity" />
         <activity
-            android:name=".ReadReply"
+            android:name=".ReadReplyActivity"
             android:label="Communication"></activity>
 
         <service android:name=".WatchFaceService"

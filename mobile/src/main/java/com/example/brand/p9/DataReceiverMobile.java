@@ -32,11 +32,13 @@ public class DataReceiverMobile extends WearableListenerService {
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
                 List<String> path = dataItem.getUri().getPathSegments();
                 String action = path.get(1);
+
                 mMessage = dataMap.get("message");
                 String time = dataMap.get("time");
                 String reply = dataMap.get("reply");
                 userUID = dataMap.get("userUID");
                 partnerUID = dataMap.get("partnerUID");
+
                 String sendMessage = dataMap.get("sendMessage");
                 String sendTime = dataMap.get("sendTime");
                 String sendReply = dataMap.get("sendReply");
