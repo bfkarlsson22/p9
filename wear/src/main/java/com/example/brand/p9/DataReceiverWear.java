@@ -59,7 +59,6 @@ public class DataReceiverWear extends WearableListenerService {
         mMessage = dataMap.get("message");
         String time = dataMap.get("time");
         String reply = dataMap.get("reply");
-        if(mMessage !=null){
             Log.d("6666", mMessage + time + reply);
             Intent intent = new Intent(this, ReadReplyActivity.class);
             intent.putExtra("message", mMessage);
@@ -67,7 +66,7 @@ public class DataReceiverWear extends WearableListenerService {
             intent.putExtra("reply", reply);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
+
 
     }
     public void dataHandler(Context context, DataMap dataMap){

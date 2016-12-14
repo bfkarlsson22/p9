@@ -22,25 +22,6 @@
         android:layout_marginTop="35dp"
         android:id="@+id/tv2"/>
 
-    <ImageButton
-        android:id="@+id/bIDisLike"
-
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/like"
-        android:visibility="invisible"
-        android:layout_toEndOf="@+id/tv2"/>
-
-    <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/bILike"
-        android:src="@drawable/like"
-        android:visibility="invisible"
-        android:scaleType="fitCenter"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/bIDisLike"/>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,6 +38,26 @@
         android:text="Dislike"
         android:visibility="invisible"
         android:layout_below="@+id/bILike"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/bILike"
+        android:src="@drawable/like"
+        android:visibility="invisible"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/tv1"
+        android:background="@null"/>
+
+    <ImageButton
+        android:id="@+id/bIDisLike"
+
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/like"
+        android:visibility="invisible"
+        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
 
 

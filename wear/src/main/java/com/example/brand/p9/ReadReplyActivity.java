@@ -3,6 +3,7 @@ package com.example.brand.p9;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
@@ -28,6 +29,9 @@ public class ReadReplyActivity extends WearableActivity {
     String userUID;
     String partnerUID;
     Context context;
+    String partnerName;
+
+
 
 
     @Override
@@ -43,6 +47,7 @@ public class ReadReplyActivity extends WearableActivity {
                 mTextTime = (TextView) stub.findViewById(R.id.tv2);
                 mDislike = (Button) stub.findViewById(R.id.bDislike2);
                 mLike = (Button) stub.findViewById(R.id.bLike2);
+
                 if (messages != null) {
                     mTextView.setText(messages);
                 }
@@ -50,9 +55,11 @@ public class ReadReplyActivity extends WearableActivity {
                     mTextTime.setText("Sent at: " + time);
                 }
                 if(reply.equals("false")){
-                   falseReply();
+                  falseReply();
+
                 }else{
                   trueReply();
+
                 }
             }
 
@@ -61,7 +68,8 @@ public class ReadReplyActivity extends WearableActivity {
         context = this;
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
         userUID = localStorageWear.getSettings().get("UID");
-        partnerUID = localStorageWear.getSettings().get("PARTNERID"); //change to PARTNERID
+        partnerUID = localStorageWear.getSettings().get("UID"); //change to PARTNERID
+        partnerName = localStorageWear.getSettings().get("PARTNERNAME");
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -75,6 +83,11 @@ public class ReadReplyActivity extends WearableActivity {
             }
         }
 
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        long[] vibrationPattern = {0, 500, 50, 300};
+        //-1 - don't repeat
+        final int indexInPatternToRepeat = -1;
+        vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
     }
 
 
@@ -113,7 +126,7 @@ public class ReadReplyActivity extends WearableActivity {
     }
 
     public void trueReply(){
-        mTextView.setText("Your partner has replied: " + messages);
+        mTextView.setText(partnerName +" has replied: " + messages);
         mTextView.setLongClickable(true);
         mTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

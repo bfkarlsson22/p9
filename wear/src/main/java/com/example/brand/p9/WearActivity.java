@@ -30,7 +30,7 @@ public class WearActivity extends WearableActivity {
 
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
         UID = localStorageWear.getSettings().get("UID");
-        partnerUID = localStorageWear.getSettings().get("PARTNERID"); //change to PARTNERID
+        partnerUID = localStorageWear.getSettings().get("UID"); //change to PARTNERID
 
         Log.d("7575", UID+partnerUID);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
