@@ -27,6 +27,8 @@ public class ReadReplyActivity extends WearableActivity {
     private DataSenderWear mReplySender;
     String userUID;
     String partnerUID;
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,10 @@ public class ReadReplyActivity extends WearableActivity {
 
 
         });
+        context = this;
+        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+        userUID = localStorageWear.getSettings().get("UID");
+        partnerUID = localStorageWear.getSettings().get("PARTNERID"); //change to PARTNERID
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -65,9 +71,7 @@ public class ReadReplyActivity extends WearableActivity {
                 messages = extras.getString("message");
                 time = extras.getString("time");
                 reply = extras.getString("reply");
-                userUID = extras.getString("userUID");
-                partnerUID = extras.getString("partnerUID");
-                Log.d("7878", messages+time+reply+userUID+partnerUID);
+                Log.d("7878", messages+time+reply);
             }
         } else {
             messages = (String) savedInstanceState.getSerializable("message");
@@ -89,9 +93,7 @@ public class ReadReplyActivity extends WearableActivity {
                     public void onClick(View view) {
                         String message = "LIKE";
                         String reply = "true";
-                        Long time = System.currentTimeMillis();
-                        String currentTime = String.valueOf(time);
-                        mReplySender.sendReply(message, currentTime, reply, userUID, partnerUID);
+                        mReplySender.sendMsgtoPhone(message, reply, partnerUID);
                         Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
                         startActivity(intent);
                     }
@@ -102,9 +104,7 @@ public class ReadReplyActivity extends WearableActivity {
                     public void onClick(View view) {
                         String message = "DISLIKE";
                         String reply = "true";
-                        Long time = System.currentTimeMillis();
-                        String currentTime = String.valueOf(time);
-                        mReplySender.sendReply(message, currentTime, reply, userUID, partnerUID);
+                        mReplySender.sendMsgtoPhone(message, reply,partnerUID);
                         Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
                         startActivity(intent);
                     }

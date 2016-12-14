@@ -7,8 +7,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by EmilSiegenfeldt on 07/12/2016.
@@ -33,33 +31,18 @@ public class DataSenderMobile {
 
     }
 
-    public void sendMessage(String message, String time, String reply, String userUID, String partnerUID){
+    public void sendMessage(String message, String time, String reply){
         buildApi();
         String timer = String.valueOf(System.currentTimeMillis());
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/"+timer);
         putDataMapReq.getDataMap().putString("message", message);
         putDataMapReq.getDataMap().putString("time", time);
         putDataMapReq.getDataMap().putString("reply", reply);
-        putDataMapReq.getDataMap().putString("userUID", userUID);
-        putDataMapReq.getDataMap().putString("partnerUID", partnerUID);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
         Log.d("7777", message);
 
     }
-
-    public void sendUserInfo(String userUID, String partnerUID){
-        buildApi();
-        String timer = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/"+timer);
-        putDataMapReq.getDataMap().putString("userUID", userUID);
-        putDataMapReq.getDataMap().putString("partnerUID", partnerUID);
-        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
-        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
-        Log.d("7777", "sendUSerInfo: " +userUID+partnerUID);
-
-    }
-
 
 
     public void callBack(int id){

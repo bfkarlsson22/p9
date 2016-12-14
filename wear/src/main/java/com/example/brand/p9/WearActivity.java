@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.view.View;
 
 public class WearActivity extends WearableActivity {
@@ -17,6 +18,8 @@ public class WearActivity extends WearableActivity {
     private Sensor mSensor;
     public SensorEventListener mStepListener;
     Context context;
+    String UID;
+    String partnerUID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +29,10 @@ public class WearActivity extends WearableActivity {
         context = this;
 
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
-        String UID = localStorageWear.getSettings().get("UID");
+        UID = localStorageWear.getSettings().get("UID");
+        partnerUID = localStorageWear.getSettings().get("PARTNERID"); //change to PARTNERID
 
+        Log.d("7575", UID+partnerUID);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
@@ -41,6 +46,7 @@ public class WearActivity extends WearableActivity {
                     @Override
                     public void onSwipeRight(){
                         Intent intent = new Intent(WearActivity.this, SendMsgActivity.class);
+                        intent.putExtra("partnerUID", partnerUID);
                         startActivity(intent);
                     }
                 });

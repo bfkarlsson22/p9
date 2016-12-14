@@ -85,16 +85,9 @@ public class DataReceiverMobile extends WearableListenerService {
         partnerUID = dataMap.get("partnerUID");
 
         if(mMessage !=null) {
-            writeToFB(mMessage, reply, userUID); // change to partnerID after dev
+            writeToFB(mMessage, reply, partnerUID);
         }
 
-            String sendMessage = dataMap.get("sendMessage");
-            String sendTime = dataMap.get("sendTime");
-            String sendReply = dataMap.get("sendReply");
-            if(sendMessage !=null){
-                Log.d("4545", sendMessage+sendTime+sendReply);
-                writeToFB(sendMessage, sendReply, userUID);
-        }
     }
     public void replyHandler(DataMap dataMap){
 

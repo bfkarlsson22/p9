@@ -90,7 +90,6 @@ public class MainActivity extends Activity {
                     name = dataSnapshot.child("Name").getValue().toString();
                     partner = dataSnapshot.child("Partner").getValue().toString();
                     Log.d("7777", name+partner);
-                    dataSenderMobile.sendUserInfo(userName, partner);
 
                 }
 
@@ -149,7 +148,7 @@ public class MainActivity extends Activity {
                     String time = dataSnapshot.child("time").getValue().toString();
                     Log.d("9999", message+reply+time);
 
-                    dataSenderMobile.sendMessage(message, time, reply, userName, partner);}
+                    dataSenderMobile.sendMessage(message, time, reply);}
 
             }
 
