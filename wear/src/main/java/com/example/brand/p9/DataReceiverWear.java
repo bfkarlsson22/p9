@@ -32,27 +32,11 @@ public class DataReceiverWear extends WearableListenerService {
 
                 if(action.equals("settings")){
                     storeSettings(context, dataMap);
+                } else if(action.equals("message")){
+                    message(dataMap);
                 }
 
-                mMessage = dataMap.get("message");
-                String time = dataMap.get("time");
-                String reply = dataMap.get("reply");
-                mUserUID = dataMap.get("userUID");
-                String partnerId = dataMap.get("partnerUID");
-                if(mMessage !=null){
-                    Log.d("6666", mMessage + time + reply);
-                    Intent intent = new Intent(this, ReadReplyActivity.class);
-                    intent.putExtra("message", mMessage);
-                    intent.putExtra("time", time);
-                    intent.putExtra("reply", reply);
-                    intent.putExtra("userUID", mUserUID);
-                    intent.putExtra("partnerUID", partnerId);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-                if(mUserUID !=null){
-                    Log.d("7878", "userIdSigned:" + mUserUID);
-                }
+
             }
         }
     }
@@ -69,6 +53,29 @@ public class DataReceiverWear extends WearableListenerService {
 
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
         localStorageWear.settings(UID,partnerId,userName,partnerName);
+    }
+    public void message(DataMap dataMap){
+        mMessage = dataMap.get("message");
+        String time = dataMap.get("time");
+        String reply = dataMap.get("reply");
+
+        mUserUID = dataMap.get("userUID");
+        String partnerId = dataMap.get("partnerUID");
+
+        if(mMessage !=null){
+            Log.d("6666", mMessage + time + reply);
+            Intent intent = new Intent(this, ReadReplyActivity.class);
+            intent.putExtra("message", mMessage);
+            intent.putExtra("time", time);
+            intent.putExtra("reply", reply);
+            intent.putExtra("userUID", mUserUID);
+            intent.putExtra("partnerUID", partnerId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        if(mUserUID !=null){
+            Log.d("7878", "userIdSigned:" + mUserUID);
+        }
     }
 
 
