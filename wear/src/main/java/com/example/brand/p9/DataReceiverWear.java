@@ -1,5 +1,6 @@
 package com.example.brand.p9;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -10,17 +11,29 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.WearableListenerService;
 
+import java.util.List;
+
 public class DataReceiverWear extends WearableListenerService {
 
     public String mMessage;
     public String mUserUID;
+    Context context;
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+        context = this;
         for(DataEvent event : dataEvents){
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+
+                List<String> path = dataItem.getUri().getPathSegments();
+                String action = path.get(1);
+
+                if(action.equals("settings")){
+                    storeSettings(context, dataMap);
+                }
+
                 mMessage = dataMap.get("message");
                 String time = dataMap.get("time");
                 String reply = dataMap.get("reply");
@@ -47,6 +60,15 @@ public class DataReceiverWear extends WearableListenerService {
     public String getUserUID(){
         Log.d("7878", "userIdmethod: " + mUserUID);
         return mUserUID;
+    }
+    public void storeSettings(Context context, DataMap dataMap){
+        String UID = dataMap.getString("UID");
+        String partnerId = dataMap.getString("PARTNERID");
+        String partnerName = dataMap.getString("PARTNERNAME");
+        String userName = dataMap.getString("USERNAME");
+
+        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+        localStorageWear.settings(UID,partnerId,userName,partnerName);
     }
 
 

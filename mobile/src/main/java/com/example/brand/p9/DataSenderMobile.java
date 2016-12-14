@@ -62,7 +62,6 @@ public class DataSenderMobile {
 
 
 
-
     public void callBack(int id){
         buildApi();
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/callback/"+id);
@@ -70,6 +69,19 @@ public class DataSenderMobile {
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
     }
+
+    public void sendSettings(String uId, String partnerId, String partnerName, String userName){
+        buildApi();
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/settings/");
+        putDataMapReq.getDataMap().putString("UID", uId);
+        putDataMapReq.getDataMap().putString("PARTNERID", partnerId);
+        putDataMapReq.getDataMap().putString("PARTNERNAME", partnerName);
+        putDataMapReq.getDataMap().putString("USERNAME", userName);
+
+        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
+        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
+    }
+
     public void buildApi(){
         googleApiClient = new GoogleApiClient.Builder(context).addApi(Wearable.API).build();
         googleApiClient.connect();

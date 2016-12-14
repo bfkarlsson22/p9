@@ -17,7 +17,6 @@ public class WearActivity extends WearableActivity {
     private Sensor mSensor;
     public SensorEventListener mStepListener;
     Context context;
-    public DataReceiverWear messageReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +24,6 @@ public class WearActivity extends WearableActivity {
         setAmbientEnabled();
         startService(new Intent(this, DataReceiverWear.class));
         context = this;
-        messageReceiver = new DataReceiverWear();
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {

@@ -60,7 +60,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             dataSender.syncData();
 
             LocalStorageWear db = new LocalStorageWear(getApplicationContext());
-
+            Log.d("SETTINGS",db.getSettings().toString());
             Long time = System.currentTimeMillis();
             java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
             String day = simpleDateFormat.format(new Date(time));

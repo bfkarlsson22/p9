@@ -31,15 +31,16 @@ public class MainActivity extends Activity {
     String name;
     String userName;
     String partner;
-    public DataSenderMobile messageSender;
+    public DataSenderMobile dataSenderMobile;
     private Button mButtonNotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        messageSender = new DataSenderMobile(mContext);
+        dataSenderMobile = new DataSenderMobile(mContext);
         startService(new Intent(this, DataReceiverMobile.class));
+
         mButtonNotify = (Button) findViewById(R.id.bNotify);
         mButtonNotify.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +71,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 writeMessage();
-
             }
         });
         getUserInfoFromFB();
@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
                     name = dataSnapshot.child("Name").getValue().toString();
                     partner = dataSnapshot.child("Partner").getValue().toString();
                     Log.d("7777", name+partner);
-                    messageSender.sendUserInfo(userName, partner);
+                    dataSenderMobile.sendUserInfo(userName, partner);
 
                 }
 
@@ -149,7 +149,7 @@ public class MainActivity extends Activity {
                     String time = dataSnapshot.child("time").getValue().toString();
                     Log.d("9999", message+reply+time);
 
-                    messageSender.sendMessage(message, time, reply, userName, partner);}
+                    dataSenderMobile.sendMessage(message, time, reply, userName, partner);}
 
             }
 
@@ -179,18 +179,6 @@ public class MainActivity extends Activity {
 
         listenerRef.limitToLast(1).addChildEventListener(messageListener);
 
-    }
-
-    public void sendSteps(){
-        int steps = 1;
-        DatabaseReference stepRef = mDatabase.getReference("steps/"+userName);
-        stepRef.push().setValue(steps);
-    }
-
-    public void sendActiveMinutes(){
-        int min = 1;
-        DatabaseReference minRef = mDatabase.getReference("active minutes/"+userName);
-        minRef.push().setValue(min);
     }
 
     public void listenForSteps(){

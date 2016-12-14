@@ -33,9 +33,7 @@
         <activity
             android:name=".ReadReply"
             android:label="Communication"></activity>
-        <activity
-            android:name=".TestActivity"
-            android:label="@string/title_activity_test"></activity>
+
         <service android:name=".WatchFaceService"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_WALLPAPER">

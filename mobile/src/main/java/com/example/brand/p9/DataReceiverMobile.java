@@ -41,15 +41,14 @@ public class DataReceiverMobile extends WearableListenerService {
                 String sendTime = dataMap.get("sendTime");
                 String sendReply = dataMap.get("sendReply");
                 Log.d("6666", "reply: "+reply);
+
                 if(mMessage !=null){
                     writeToFB(mMessage, reply, userUID); // change to partnerID after dev
                 }
 
                 if(sendMessage !=null){
                     Log.d("4545", sendMessage+sendTime+sendReply);
-
                     writeToFB(sendMessage, sendReply, userUID);
-
                 }
 
                 if(action.equals("data")){

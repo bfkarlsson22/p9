@@ -35,7 +35,6 @@ public class DataSenderWear {
                 float value = dataToSend.getFloat(dataToSend.getColumnIndex("VALUE"));
                 final int id = dataToSend.getInt(dataToSend.getColumnIndex("ID"));
 
-
                 PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/data/"+id);
                 putDataMapReq.getDataMap().putLong("TIME",time);
                 putDataMapReq.getDataMap().putString("UNIT",unit);

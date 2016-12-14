@@ -2,14 +2,17 @@ package com.example.brand.p9;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.wearable.DataMap;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class LocalStorageWear extends SQLiteOpenHelper {
@@ -27,7 +30,6 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         day = simpleDateFormat.format(new Date(time));
 
         checkDaily();
-
     }
 
     @Override
@@ -80,8 +82,6 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         String query = "UPDATE USERDATA SET SENT = 1 WHERE ID="+id;
         db.execSQL(query);
     }
-
-
     //check if a daily entry exists otherwise create one
     private void checkDaily() {
         boolean createUserEntry;
@@ -148,6 +148,22 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
             writableDatabase.close();
         }
+    }
+
+    public void settings(String uId, String partnerId, String userName, String partnerName){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString("UID",uId);
+        editor.putString("PARTNERID",partnerId);
+        editor.putString("USERNAME",userName);
+        editor.putString("PARTNERNAME",partnerName);
+        editor.apply();
+
+    }
+    public HashMap<String, String> getSettings(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        return (HashMap<String, String>) preferences.getAll();
     }
 
 
