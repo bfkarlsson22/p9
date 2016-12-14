@@ -13,40 +13,41 @@ import com.google.android.gms.wearable.WearableListenerService;
 public class DataReceiverWear extends WearableListenerService {
 
     public String mMessage;
-    public String mPrevTime = "notTime";
+    public String mUserUID;
+
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        LocalStorageWear localStorageWear = new LocalStorageWear(this);
         for(DataEvent event : dataEvents){
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
-
-                Log.d("DATA ITEM",dataItem.toString());
-                Log.d("DATA",dataMap.toString());
-                String path = dataItem.getUri().getPathSegments().get(1);
-                if(path.equals("data")){
-                    Log.d("DATA RECEIVED",dataMap.toString());
-                }
-
-                Log.d("6666", mPrevTime);
                 mMessage = dataMap.get("message");
                 String time = dataMap.get("time");
                 String reply = dataMap.get("reply");
-                if(mMessage !=null && !mPrevTime.equals(time)){
+                mUserUID = dataMap.get("userUID");
+                String partnerId = dataMap.get("partnerUID");
+                if(mMessage !=null){
                     Log.d("6666", mMessage + time + reply);
-                    Intent intent = new Intent(this, Communication.class);
+                    Intent intent = new Intent(this, ReadReply.class);
                     intent.putExtra("message", mMessage);
                     intent.putExtra("time", time);
                     intent.putExtra("reply", reply);
+                    intent.putExtra("userUID", mUserUID);
+                    intent.putExtra("partnerUID", partnerId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                    mPrevTime = time;
+                }
+                if(mUserUID !=null){
+                    Log.d("7878", "userIdSigned:" + mUserUID);
                 }
             }
         }
     }
 
+    public String getUserUID(){
+        Log.d("7878", "userIdmethod: " + mUserUID);
+        return mUserUID;
+    }
 
 
 }

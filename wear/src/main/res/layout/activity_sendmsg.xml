@@ -5,7 +5,7 @@
                                              android:id="@+id/watch_view_stub"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
-                                             app:rectLayout="@layout/rect_activity_messages"
-                                             app:roundLayout="@layout/round_activity_messages"
-                                             tools:context="com.example.brand.p9.ReadReply"
+                                             app:rectLayout="@layout/rect_activity_sendmsg"
+                                             app:roundLayout="@layout/round_activity_sendmsg"
+                                             tools:context="com.example.brand.p9.SendMsg"
                                              tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>
