@@ -25,6 +25,9 @@ public class WearActivity extends WearableActivity {
         startService(new Intent(this, DataReceiverWear.class));
         context = this;
 
+        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+        String UID = localStorageWear.getSettings().get("UID");
+
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
