@@ -76,7 +76,7 @@ public class WearActivity extends WearableActivity {
                 if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
                     if (event.values.length > 0) {
                         LocalStorageWear localStorage = new LocalStorageWear(context);
-                        localStorage.addUserData(System.currentTimeMillis(),"STEP",1);
+                        localStorage.addToUserData(System.currentTimeMillis(),"STEP",1);
 
                         DataSenderWear dataSender = new DataSenderWear(context);
                         dataSender.syncData();

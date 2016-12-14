@@ -26,7 +26,7 @@ public class DataSenderWear {
         buildApi();
 
         final LocalStorageWear localStorageWear = new LocalStorageWear(context);
-        Cursor dataToSend = localStorageWear.getUnsentData();
+        Cursor dataToSend = localStorageWear.getUnsentUserData();
 
         if(dataToSend.moveToFirst()){
             do {

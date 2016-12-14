@@ -1,5 +1,6 @@
 package com.example.brand.p9;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.wearable.DataEvent;
@@ -22,10 +23,10 @@ public class DataReceiverMobile extends WearableListenerService {
     String userUID;
 
 
-
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         Log.d("DATA CHANGED","TRUE");
+        Context context = this;
         for(DataEvent event : dataEvents){
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
@@ -34,14 +35,8 @@ public class DataReceiverMobile extends WearableListenerService {
                 String action = path.get(1);
 
 
-
-
-
-
-
-
                 if(action.equals("data")){
-                    dataHandler(dataMap);
+                    dataHandler(dataMap, context,"UID");
                 } else if(action.equals("callback")){
                     callback();
                 } else if(action.equals("message")){
@@ -51,14 +46,31 @@ public class DataReceiverMobile extends WearableListenerService {
                 }
             }
         }
-/*        Context context = this;
-        DataSenderMobile dataSenderMobile = new DataSenderMobile(context);
-        dataSenderMobile.sendData();*/
+        //DataSenderMobile dataSenderMobile = new DataSenderMobile(context);
+        //dataSenderMobile.sendData();
     }
-    public void dataHandler(DataMap data){
+    public void dataHandler(DataMap data, Context context, String who){
         Log.d("DATA",data.toString());
 
+        LocalStorageMobile localStorageMobile = new LocalStorageMobile(context);
 
+        String dataType = data.getString("UNIT");
+        DatabaseReference databaseReference;
+
+        if(dataType.equals("STEP")){
+            Log.d("DATA TYPE","STEP");
+            Log.d("USER",localStorageMobile.getSettings().get("UID"));
+            databaseReference = mDatabase.getReference("steps/"+localStorageMobile.getSettings().get(who));
+        } else {
+            Log.d("DATA TYPE","MINUTES");
+            databaseReference = mDatabase.getReference("minutes/"+localStorageMobile.getSettings().get("UID"));
+        }
+        HashMap<String, String> dataToWrite = new HashMap<>();
+        dataToWrite.put("UNIT",data.getString("UNIT"));
+        dataToWrite.put("VALUE", String.valueOf(data.getDouble("VALUE")));
+        dataToWrite.put("TIME", String.valueOf(data.getLong("TIME")));
+
+        databaseReference.push().setValue(dataToWrite);
     }
     public void callback(){
 

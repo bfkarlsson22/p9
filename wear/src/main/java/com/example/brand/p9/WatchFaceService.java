@@ -1,26 +1,18 @@
 package com.example.brand.p9;
 
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.icu.text.DecimalFormat;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
-import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.support.wearable.watchface.CanvasWatchFaceService;
-import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by EmilSiegenfeldt on 01/12/2016.
@@ -59,19 +51,26 @@ public class WatchFaceService extends CanvasWatchFaceService {
             DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
             dataSender.syncData();
 
-            LocalStorageWear db = new LocalStorageWear(getApplicationContext());
-            Log.d("SETTINGS",db.getSettings().toString());
+            LocalStorageWear localStorageWear = new LocalStorageWear(getApplicationContext());
+            Log.d("SETTINGS",localStorageWear.getSettings().toString());
             Long time = System.currentTimeMillis();
             java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
             String day = simpleDateFormat.format(new Date(time));
 
-            Cursor cursor = db.getDaily(0,"STEP",day);
-            cursor.moveToFirst();
-            userSteps = cursor.getDouble(cursor.getColumnIndex("VALUE"));
-            userGoal = 100;
+            Cursor cursorUser = localStorageWear.getDailyData(localStorageWear.getSettings().get("UID"),"STEP",day);
+            cursorUser.moveToFirst();
+            userSteps = cursorUser.getDouble(cursorUser.getColumnIndex("VALUE"));
+            Log.d("USERSTEPS", String.valueOf(userSteps));
 
-            competitorSteps = 100;
-            competitorGoal = 200;
+            Cursor cursorCompetitor = localStorageWear.getDailyData(localStorageWear.getSettings().get("PARTNERID"),"STEP",day);
+            if(cursorCompetitor.moveToFirst()){
+                competitorSteps = cursorCompetitor.getDouble(cursorCompetitor.getColumnIndex("VALUE"));
+            } else {
+                competitorSteps = 0;
+            }
+
+            userGoal = Double.parseDouble(localStorageWear.getSettings().get("USERGOAL"));
+            competitorGoal = Double.parseDouble(localStorageWear.getSettings().get("PARTNERGOAL"));
 
             invalidate();
         }

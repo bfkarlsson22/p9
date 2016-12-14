@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.wearable.DataMap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,9 +29,12 @@ public class MainActivity extends Activity {
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    String name;
+    LocalStorageMobile localStorageMobile = new LocalStorageMobile(mContext);
     String userName;
-    String partner;
+    String UID;
+    String partnerID;
+
+
     public DataSenderMobile dataSenderMobile;
     private Button mButtonNotify;
 
@@ -39,6 +43,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dataSenderMobile = new DataSenderMobile(mContext);
+        userName = localStorageMobile.getSettings().get("USERNAME");
+        UID = localStorageMobile.getSettings().get("UID");
+        partnerID = localStorageMobile.getSettings().get("PARTNERID");
+
         startService(new Intent(this, DataReceiverMobile.class));
 
         mButtonNotify = (Button) findViewById(R.id.bNotify);
@@ -70,75 +78,23 @@ public class MainActivity extends Activity {
         sendDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                writeMessage();
+                DataReceiverMobile dataReceiverMobile = new DataReceiverMobile();
+                DataMap data = new DataMap();
+                data.putString("UNIT","STEP");
+                data.putDouble("VALUE",1);
+                data.putLong("TIME",System.currentTimeMillis());
+
+                dataReceiverMobile.dataHandler(data,mContext,"PARTNERID");
             }
         });
-        getUserInfoFromFB();
         listenForMsg();
+        listenForSteps();
 
 
-    }
-
-    public void getUserInfoFromFB(){
-
-            userName = mAuth.getCurrentUser().getUid().toString();
-            DatabaseReference userRef = mDatabase.getReference("user/" + userName );
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    name = dataSnapshot.child("Name").getValue().toString();
-                    partner = dataSnapshot.child("Partner").getValue().toString();
-                    Log.d("7777", name+partner);
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-        }
-
-    public void writeMessage(){
-
-        String message = "Good job Brandur, this message stuff is awesome";
-        DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
-
-        Long time = System.currentTimeMillis();
-        String currentTime = String.valueOf(time);
-
-        HashMap<String, String> messageMap = new HashMap<>();
-        messageMap.put("message",message);
-        messageMap.put("time",currentTime);
-        messageMap.put("reply","false");
-        messageRef.push().setValue(messageMap);
-
-    }
-    public void writeMessage2(String message, String reply){
-        DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
-        Long time = System.currentTimeMillis();
-        String currentTime = String.valueOf(time);
-
-        HashMap<String, String> messageMap = new HashMap<>();
-        messageMap.put("message",message);
-        messageMap.put("time",currentTime);
-        messageMap.put("reply","false");
-        messageRef.push().setValue(messageMap);
-
-    }
-
-    public void writeToFB(String message, String time, String reply){
-
-        DatabaseReference messageRef = mDatabase.getReference("messages/" +userName); // change userName to partner after dev
-        HashMap<String, String> messageMap = new HashMap<>();
-        messageMap.put("message",message);
-        messageMap.put("time",time);
-        messageMap.put("reply",reply);
-        messageRef.push().setValue(messageMap);
     }
 
     public void listenForMsg(){
-        DatabaseReference listenerRef = mDatabase.getReference("messages/" + userName + "/");
+        DatabaseReference listenerRef = mDatabase.getReference("messages/" + UID + "/");
         ChildEventListener messageListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -181,11 +137,19 @@ public class MainActivity extends Activity {
     }
 
     public void listenForSteps(){
-        DatabaseReference stepListenerRef = mDatabase.getReference("steps/" + partner);
+        DatabaseReference stepListenerRef = mDatabase.getReference("steps/"+partnerID);
         ChildEventListener stepListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
+                Log.d("STEP",dataSnapshot.toString());
+
+                String unit = dataSnapshot.child("UNIT").getValue().toString();
+                Long time = Long.parseLong(dataSnapshot.child("TIME").getValue().toString());
+                double value = Double.parseDouble(dataSnapshot.child("VALUE").getValue().toString());
+
+                String user = partnerID;
+                dataSenderMobile.sendData(unit,value,time,user);
             }
 
             @Override
@@ -213,7 +177,7 @@ public class MainActivity extends Activity {
     }
 
     public void listenForMin(){
-        DatabaseReference minListenerRef = mDatabase.getReference("active minutes/" + partner);
+        DatabaseReference minListenerRef = mDatabase.getReference("active minutes/" + partnerID);
         ChildEventListener minListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

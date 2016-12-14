@@ -20,40 +20,33 @@ public class DataSenderMobile {
         this.context = context;
     }
 
-    public void sendData(String unit, String value){
+    public void sendData(String unit, double value, Long time, String user){
+
         buildApi();
-        String time = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/data/"+time);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/data");
         putDataMapReq.getDataMap().putString("UNIT",unit);
-        putDataMapReq.getDataMap().putString("VALUE",value);
+        putDataMapReq.getDataMap().putDouble("VALUE",value);
+        putDataMapReq.getDataMap().putLong("TIME",time);
+        putDataMapReq.getDataMap().putString("USER",user);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
 
     }
 
-    public void sendMessage(String message, String time, String reply){
+    public void sendMessage(String message, String time, String reply) {
         buildApi();
         String timer = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/"+timer);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/message/" + timer);
         putDataMapReq.getDataMap().putString("message", message);
         putDataMapReq.getDataMap().putString("time", time);
         putDataMapReq.getDataMap().putString("reply", reply);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
-        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
+        Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
         Log.d("7777", message);
 
     }
 
-
-    public void callBack(int id){
-        buildApi();
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/callback/"+id);
-        putDataMapReq.getDataMap().putString("RECEIVED", String.valueOf(id));
-        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
-        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
-    }
-
-    public void sendSettings(String uId, String partnerId, String partnerName, String userName){
+    public void sendSettings(String uId, String partnerId, String partnerName, String userName, String userGoal, String partnerGoal){
         buildApi();
         String time = String.valueOf(System.currentTimeMillis());
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/settings/"+time);
@@ -61,6 +54,8 @@ public class DataSenderMobile {
         putDataMapReq.getDataMap().putString("PARTNERID", partnerId);
         putDataMapReq.getDataMap().putString("PARTNERNAME", partnerName);
         putDataMapReq.getDataMap().putString("USERNAME", userName);
+        putDataMapReq.getDataMap().putString("USERGOAL",userGoal);
+        putDataMapReq.getDataMap().putString("PARTNERGOAL",partnerGoal);
 
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient,putDataReq);

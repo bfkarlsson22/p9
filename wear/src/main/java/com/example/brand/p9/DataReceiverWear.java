@@ -16,7 +16,6 @@ import java.util.List;
 public class DataReceiverWear extends WearableListenerService {
 
     public String mMessage;
-    public String mUserUID;
     Context context;
 
     @Override
@@ -44,13 +43,17 @@ public class DataReceiverWear extends WearableListenerService {
     }
 
     public void storeSettings(Context context, DataMap dataMap){
+
+        Log.d("DATA SETTINGS",dataMap.toString());
         String UID = dataMap.getString("UID");
         String partnerId = dataMap.getString("PARTNERID");
         String partnerName = dataMap.getString("PARTNERNAME");
         String userName = dataMap.getString("USERNAME");
+        String userGoal = dataMap.getString("USERGOAL");
+        String partnerGoal = dataMap.get("PARTNERGOAL");
 
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
-        localStorageWear.settings(UID,partnerId,userName,partnerName);
+        localStorageWear.settings(UID,partnerId,userName,partnerName,userGoal,partnerGoal);
     }
     public void message(DataMap dataMap){
         mMessage = dataMap.get("message");
@@ -68,6 +71,14 @@ public class DataReceiverWear extends WearableListenerService {
 
     }
     public void dataHandler(Context context, DataMap dataMap){
+        Log.d("DATA",dataMap.toString());
+        String unit = dataMap.get("UNIT");
+        String user = dataMap.get("USER");
+        Long time = dataMap.getLong("TIME");
+        double value = dataMap.getDouble("VALUE");
+
+        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+        localStorageWear.updateDailyData(unit,value,user,time);
 
     }
 
