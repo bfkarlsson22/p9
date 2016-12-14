@@ -72,7 +72,8 @@ public class DataSenderMobile {
 
     public void sendSettings(String uId, String partnerId, String partnerName, String userName){
         buildApi();
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/settings/");
+        String time = String.valueOf(System.currentTimeMillis());
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/settings/"+time);
         putDataMapReq.getDataMap().putString("UID", uId);
         putDataMapReq.getDataMap().putString("PARTNERID", partnerId);
         putDataMapReq.getDataMap().putString("PARTNERNAME", partnerName);

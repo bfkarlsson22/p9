@@ -57,6 +57,8 @@ public class DataReceiverMobile extends WearableListenerService {
     }
     public void dataHandler(DataMap data){
         Log.d("DATA",data.toString());
+
+
     }
     public void callback(){
 
