@@ -73,8 +73,6 @@ public class ReadReplyActivity extends WearableActivity {
                 reply = extras.getString("reply");
                 Log.d("7878", messages+time+reply);
             }
-        } else {
-            messages = (String) savedInstanceState.getSerializable("message");
         }
 
     }

@@ -21,33 +21,43 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="35dp"
         android:id="@+id/tv2"/>
+
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/bIDisLike"
+
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/like"
+        android:visibility="invisible"
+        android:layout_toEndOf="@+id/tv2"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:id="@+id/bILike"
         android:src="@drawable/like"
         android:visibility="invisible"
+        android:scaleType="fitCenter"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/bIDisLike"/>
 
-        />
-    <ImageButton
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bIDisLike"
-        android:src="@drawable/dislike"
+        android:id="@+id/bLike2"
+        android:text="Like"
         android:visibility="invisible"
+        android:layout_below="@+id/bILike"
+        android:layout_alignParentStart="true"/>
 
-        />
-
-    <android.support.wearable.view.GridViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <android.support.wearable.view.DotsPageIndicator
-        android:id="@+id/page_indicator"
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"/>
+        android:id="@+id/bDislike2"
+        android:text="Dislike"
+        android:visibility="invisible"
+        android:layout_below="@+id/bILike"
+        android:layout_alignParentEnd="true"/>
+
 
 </RelativeLayout>
