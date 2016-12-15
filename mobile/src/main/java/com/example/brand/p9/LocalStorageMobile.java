@@ -6,10 +6,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.HashMap;
-
-/**
- * Created by EmilSiegenfeldt on 14/12/2016.
- */
+import java.util.Map;
 
 public class LocalStorageMobile {
 
@@ -19,22 +16,6 @@ public class LocalStorageMobile {
         this.context = context;
     }
 
-    public void storeSettings(String uId, String partnerId, String userName, String partnerName, String userGoal, String partnerGoal, LocalStorageInterface callback){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        SharedPreferences.Editor editor = preferences.edit();
-
-        editor.putString("UID",uId);
-        editor.putString("PARTNERID",partnerId);
-        editor.putString("USERNAME",userName);
-        editor.putString("PARTNERNAME",partnerName);
-        editor.putString("USERGOAL",userGoal);
-        editor.putString("PARTNERGOAL",partnerGoal);
-
-        editor.apply();
-        Log.d("SETTING",getSettings().toString());
-        callback.onStorageDone();
-
-    }
     public HashMap<String, String> getSettings(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         return (HashMap<String, String>) preferences.getAll();
@@ -44,6 +25,23 @@ public class LocalStorageMobile {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
+    }
+    public void deletePartnerSettings(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("PARTNERGOAL");
+        editor.remove("PARTNERNAME");
+        editor.apply();
+    }
+    public void storeData(HashMap<String, String> data){
+        Log.d("DATA STORAGE",data.toString());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        for(Map.Entry<String, String> dataEntry : data.entrySet()){
+            editor.putString(dataEntry.getKey(),dataEntry.getValue());
+        }
+        editor.apply();
+        Log.d("SETTINGS",getSettings().toString());
     }
 
 }

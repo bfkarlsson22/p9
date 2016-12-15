@@ -31,14 +31,12 @@ public class DataReceiverMobile extends WearableListenerService {
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 DataItem dataItem = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
-                List<String> path = dataItem.getUri().getPathSegments();
-                String action = path.get(1);
+                String action = dataItem.getUri().getPathSegments().get(1);
 
-
-                if(action.equals("data")){
-                    dataHandler(dataMap, context,"UID");
-                } else if(action.equals("callback")){
-                    callback();
+                if(action.equals("STEP")) {
+                    stepHandler(dataMap, context);
+                } else if(action.equals("MINUTE")){
+                    minuteHandler(dataMap,context);
                 } else if(action.equals("message")){
                     messageHandler(dataMap);
                 } else if(action.equals("reply")){
@@ -49,33 +47,12 @@ public class DataReceiverMobile extends WearableListenerService {
         //DataSenderMobile dataSenderMobile = new DataSenderMobile(context);
         //dataSenderMobile.sendData();
     }
-    public void dataHandler(DataMap data, Context context, String who){
+    public void stepHandler(DataMap data, Context context){
         Log.d("DATA",data.toString());
-
-        LocalStorageMobile localStorageMobile = new LocalStorageMobile(context);
-
-        String dataType = data.getString("UNIT");
-        DatabaseReference databaseReference;
-
-        if(dataType.equals("STEP")){
-            Log.d("DATA TYPE","STEP");
-            Log.d("USER",localStorageMobile.getSettings().get("UID"));
-            databaseReference = mDatabase.getReference("steps/"+localStorageMobile.getSettings().get(who));
-        } else {
-            Log.d("DATA TYPE","MINUTES");
-            databaseReference = mDatabase.getReference("minutes/"+localStorageMobile.getSettings().get("UID"));
-        }
-        HashMap<String, String> dataToWrite = new HashMap<>();
-        dataToWrite.put("UNIT",data.getString("UNIT"));
-        dataToWrite.put("VALUE", String.valueOf(data.getDouble("VALUE")));
-        dataToWrite.put("TIME", String.valueOf(data.getLong("TIME")));
-
-        databaseReference.push().setValue(dataToWrite);
     }
-    public void callback(){
-
+    public void minuteHandler(DataMap data, Context context){
+        Log.d("DATA",data.toString());
     }
-
 
     public void writeToFB(String message, String reply, String partnerUID){
 

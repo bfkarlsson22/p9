@@ -13,8 +13,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send to DB"
-        android:id="@+id/b_db"
+        android:text="partner step"
+        android:id="@+id/b_mock_partner_step"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
@@ -22,7 +22,7 @@
         android:text="Log Out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/b_db"
+        android:layout_alignBottom="@+id/b_mock_partner_step"
         android:layout_alignParentStart="true"
         android:id="@+id/btLogOut" />
 
@@ -34,4 +34,13 @@
         android:layout_below="@+id/btLogOut"
         android:layout_alignParentStart="true"
         android:layout_marginTop="106dp"/>
+
+    <Button
+        android:text="user step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/b_mock_user_step"
+        android:layout_alignBaseline="@+id/bNotify"
+        android:layout_alignBottom="@+id/bNotify"
+        android:layout_alignStart="@+id/b_mock_partner_step" />
 </RelativeLayout>

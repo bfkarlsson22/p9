@@ -34,6 +34,8 @@
                 <data android:scheme="wear" android:host="*" android:pathPrefix="/wear/" />
             </intent-filter>
         </service>
+        <service android:name=".FirebaseListener" android:enabled="true">
+        </service>
     </application>
 
 

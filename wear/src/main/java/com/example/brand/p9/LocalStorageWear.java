@@ -30,13 +30,25 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE USERDATA (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT, TIME INTEGER, UNIT TEXT, VALUE REAL, SENT NUMERIC);");
+        db.execSQL("CREATE TABLE USERDATA (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT, TIME INTEGER, SENT NUMERIC);");
         db.execSQL("CREATE TABLE DAILYDATA ("+ "ID INTEGER PRIMARY KEY, UNIT TEXT, VALUE REAL, USER TEXT, DAY TEXT);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
     }
+
+    public void addStepData(Long time){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("TIME",time);
+        values.put("SENT",0);
+
+        db.insert("USERDATA",null,values);
+        db.close();
+    }
+
 
     public void addToUserData(Long time, String unit, double value){
         SQLiteDatabase db = getWritableDatabase();
@@ -49,9 +61,6 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
         db.insert("USERDATA",null,values);
         db.close();
-        checkActiveness(time);
-        updateDailyData(unit,value,getSettings().get("UID"),time);
-
     }
 
     private void checkActiveness(Long time) {

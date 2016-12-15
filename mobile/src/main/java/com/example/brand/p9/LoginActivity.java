@@ -66,37 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     final FirebaseUser user = mAuth.getCurrentUser();
                                     if(user != null){
-                                        DatabaseReference userRef = mDatabase.getReference("user/");
-                                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                DataSnapshot userData = dataSnapshot.child(user.getUid());
-                                                String uId = userData.getKey();
-                                                String userName = userData.child("Name").getValue().toString();
-                                                String userGoal = userData.child("Goal").getValue().toString();
-                                                String partnerId = userData.child("Partner").getValue().toString();
-
-                                                DataSnapshot partnerData = dataSnapshot.child(partnerId);
-                                                String partnerName = partnerData.child("Name").getValue().toString();
-                                                String partnerGoal = partnerData.child("Goal").getValue().toString();
-
-                                                DataSenderMobile dataSenderMobile = new DataSenderMobile(context);
-                                                dataSenderMobile.sendSettings(uId,partnerId,partnerName,userName, userGoal,partnerGoal);
-
-                                                LocalStorageMobile localStorageMobile = new LocalStorageMobile(context);
-                                                localStorageMobile.storeSettings(uId, partnerId, userName, partnerName, userGoal,partnerGoal, new LocalStorageInterface() {
-                                                    @Override
-                                                    public void onStorageDone() {
-                                                        loadMainActivity();
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                            }
-                                        });
-
+                                        loadMainActivity();
                                     }
 
                                 }

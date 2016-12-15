@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.wearable.DataMap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -17,47 +16,43 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
-    private Button sendDB;
+    private Button btMockPartnerStep;
+    private Button btMockUserStep;
     private Button btLogOut;
-    Context mContext = this;
+    Context context = this;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    LocalStorageMobile localStorageMobile = new LocalStorageMobile(mContext);
+    LocalStorageMobile localStorageMobile = new LocalStorageMobile(context);
+
     String userName;
     String UID;
     String partnerID;
 
+    FirebaseWriter firebaseWriter = new FirebaseWriter();
+
 
     public DataSenderMobile dataSenderMobile;
-    private Button mButtonNotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dataSenderMobile = new DataSenderMobile(mContext);
+        dataSenderMobile = new DataSenderMobile(context);
         userName = localStorageMobile.getSettings().get("USERNAME");
         UID = localStorageMobile.getSettings().get("UID");
         partnerID = localStorageMobile.getSettings().get("PARTNERID");
+        localStorageMobile.deleteSettings();
 
         startService(new Intent(this, DataReceiverMobile.class));
+        startService(new Intent(this, FirebaseListener.class));
 
-        mButtonNotify = (Button) findViewById(R.id.bNotify);
-        mButtonNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-
-        });
         mAuth = FirebaseAuth.getInstance();
+
+
         btLogOut = (Button) findViewById(R.id.btLogOut);
         btLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,21 +69,28 @@ public class MainActivity extends Activity {
                 }
             }
         };
-        sendDB = (Button) findViewById(R.id.b_db);
-        sendDB.setOnClickListener(new View.OnClickListener() {
+
+        btMockPartnerStep = (Button) findViewById(R.id.b_mock_partner_step);
+        btMockPartnerStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DataReceiverMobile dataReceiverMobile = new DataReceiverMobile();
-                DataMap data = new DataMap();
-                data.putString("UNIT","STEP");
-                data.putDouble("VALUE",1);
-                data.putLong("TIME",System.currentTimeMillis());
-
-                dataReceiverMobile.dataHandler(data,mContext,"PARTNERID");
+                String partner = "T9veiBXYCgeYlJGgrxndudTZDYG3";
+                firebaseWriter.writeStep(partner,1,"STEP",System.currentTimeMillis());
             }
         });
+
+        btMockUserStep = (Button) findViewById(R.id.b_mock_user_step);
+        btMockUserStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String user = "GOdpKr4fhQO7L3j9zLPMas4ViMK2";
+                firebaseWriter.writeStep(user,1,"STEP",System.currentTimeMillis());
+            }
+        });
+
         listenForMsg();
-        listenForSteps();
+        //listenForSteps();
+
 
 
     }
@@ -176,38 +178,6 @@ public class MainActivity extends Activity {
 
     }
 
-    public void listenForMin(){
-        DatabaseReference minListenerRef = mDatabase.getReference("active minutes/" + partnerID);
-        ChildEventListener minListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        minListenerRef.addChildEventListener(minListener);
-
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -223,7 +193,7 @@ public class MainActivity extends Activity {
     }
 
     private void loadLoginActivity(){
-        Intent intent = new Intent(mContext,LoginActivity.class);
+        Intent intent = new Intent(context,LoginActivity.class);
         startActivity(intent);
     }
 
