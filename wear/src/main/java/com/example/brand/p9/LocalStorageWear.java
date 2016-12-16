@@ -10,12 +10,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.wearable.DataMap;
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LocalStorageWear extends SQLiteOpenHelper {
     private static final String DB_NAME = "LocalStorage";
     private static final int DB_VERSION = 1;
+
     Context context;
     String day;
 
@@ -30,14 +35,13 @@ public class LocalStorageWear extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE USERDATA (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT, TIME INTEGER, SENT NUMERIC);");
+        db.execSQL("CREATE TABLE STEPDATA (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT, TIME INTEGER, SENT NUMERIC);");
         db.execSQL("CREATE TABLE DAILYDATA ("+ "ID INTEGER PRIMARY KEY, UNIT TEXT, VALUE REAL, USER TEXT, DAY TEXT);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
     }
-
     public void addStepData(Long time){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -45,35 +49,17 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         values.put("TIME",time);
         values.put("SENT",0);
 
-        db.insert("USERDATA",null,values);
+        db.insert("STEPDATA",null,values);
         db.close();
+
+        java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
+        String day = simpleDateFormat.format(new Date(time));
+
+        updateDailyData(getSettings().get("UID"),day,"STEP",1.0);
     }
-
-
-    public void addToUserData(Long time, String unit, double value){
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put("TIME",time);
-        values.put("UNIT",unit);
-        values.put("VALUE",value);
-        values.put("SENT",0);
-
-        db.insert("USERDATA",null,values);
-        db.close();
-    }
-
-    private void checkActiveness(Long time) {
-        SQLiteDatabase db = getReadableDatabase();
-        Long timeFrom = time-(16*3600000);
-        String query = "SELECT SUM(VALUE) FROM USERDATA WHERE TIME >="+timeFrom+" AND UNIT='STEP'";
-        Cursor cursor = db.rawQuery(query,null);
-        Log.d("SUM",DatabaseUtils.dumpCursorToString(cursor));
-    }
-
     public Cursor getUnsentUserData(){
         SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM USERDATA WHERE SENT=0";
+        String query = "SELECT * FROM STEPDATA WHERE SENT=0";
         Cursor cursor = db.rawQuery(query,null);
         return cursor;
     }
@@ -85,70 +71,72 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public boolean checkDaily(String day, String user, String unit) {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT ID FROM DAILYDATA WHERE USER='" + user + "' AND DAY='" + day + "' AND UNIT='" + unit + "'";
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() < 1) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public void updateDailyData(String unit, double value, String user, Long time){
-        java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
-        day = simpleDateFormat.format(new Date(time));
-
-        if(!checkDaily(day,user,unit)){
-            createDaily(day,user,unit);
-        }
-
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "UPDATE DAILYDATA SET VALUE = VALUE + "+value+" WHERE USER='"+user+"' AND UNIT='"+unit+"' AND DAY='"+day+"'";
-        db.execSQL(query);
-    }
-
-    public void update(int id){
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "UPDATE USERDATA SET SENT = 1 WHERE ID="+id;
-        db.execSQL(query);
-    }
-
-    public void createDaily(String day, String user, String unit){
-        SQLiteDatabase writableDatabase = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put("UNIT",unit);
-        values.put("USER",user);
-        values.put("DAY",day);
-        values.put("VALUE",0);
-        writableDatabase.insert("DAILYDATA", null, values);
-    }
-
-
-    /*
-    * STORING UID AND PARTNER ID LOCALLY
-     */
-    public void settings(String uId, String partnerId, String userName, String partnerName, String userGoal, String partnerGoal){
+    public void settings(DataMap settings){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
 
-        editor.putString("UID",uId);
-        editor.putString("PARTNERID",partnerId);
-        editor.putString("USERNAME",userName);
-        editor.putString("PARTNERNAME",partnerName);
-        editor.putString("USERGOAL",userGoal);
-        editor.putString("PARTNERGOAL",partnerGoal);
+        for(String data : settings.keySet()) {
+            editor.putString(data.toString(), settings.getString(data.toString()));
+        }
         editor.apply();
+        Log.d("SETTINGS WEAR",getSettings().toString());
 
     }
     public HashMap<String, String> getSettings(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         return (HashMap<String, String>) preferences.getAll();
     }
+    public void updateStepData(int id){
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "UPDATE STEPDATA SET SENT = 1 WHERE ID="+id;
+        db.execSQL(query);
 
+    }
+    public void deleteStepData(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "DELETE FROM STEPDATA WHERE ID="+id;
+        db.execSQL(query);
+    }
 
+    public void updateDailyData(String user, String day, String unit, Double value){
+        if(user != null) {
+            SQLiteDatabase db = getWritableDatabase();
+            String query;
 
+            if (!checkDailyData(user, day, unit)) {
+                createDailyData(user, day, unit);
+            }
 
+            if (value != 0) {
+                query = "UPDATE DAILYDATA SET VALUE=" + value + " WHERE USER='" + user + "' AND DAY='" + day + "' AND UNIT='" + unit + "'";
+            } else {
+                query = "UPDATE DAILYDATA SET VALUE=VALUE+1 WHERE USER='" + user + "' AND DAY='" + day + "' AND UNIT='" + unit + "'";
+            }
+            db.execSQL(query);
+        }
+    }
+    private void createDailyData(String user, String day, String unit) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("DAY",day);
+        values.put("UNIT",unit);
+        values.put("USER",user);
+        values.put("VALUE",0);
+
+        db.insert("DAILYDATA",null,values);
+    }
+    public boolean checkDailyData(String user, String day, String unit){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT id FROM DAILYDATA WHERE USER='"+user+"' AND DAY='"+day+"' AND UNIT='"+unit+"'";
+        Cursor cursor = db.rawQuery(query,null);
+        if(cursor.getCount() < 1){
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 }

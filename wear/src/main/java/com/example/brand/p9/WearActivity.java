@@ -2,6 +2,7 @@ package com.example.brand.p9;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.DatabaseUtils;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,6 +18,8 @@ public class WearActivity extends WearableActivity {
     private SensorManager mSensorManager;
     private Sensor mSensor;
     public SensorEventListener mStepListener;
+    LocalStorageWear localStorageWear;
+    DataSenderWear dataSenderWear;
     Context context;
     String UID;
     String partnerUID;
@@ -27,8 +30,10 @@ public class WearActivity extends WearableActivity {
         setAmbientEnabled();
         startService(new Intent(this, DataReceiverWear.class));
         context = this;
+        localStorageWear = new LocalStorageWear(context);
+        dataSenderWear = new DataSenderWear(context);
 
-        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+
         UID = localStorageWear.getSettings().get("UID");
         partnerUID = localStorageWear.getSettings().get("UID"); //change to PARTNERID
 
@@ -75,11 +80,9 @@ public class WearActivity extends WearableActivity {
             public void onSensorChanged(SensorEvent event) {
                 if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
                     if (event.values.length > 0) {
-                        LocalStorageWear localStorage = new LocalStorageWear(context);
-                        localStorage.addToUserData(System.currentTimeMillis(),"STEP",1);
+                        localStorageWear.addStepData(System.currentTimeMillis());
+                        dataSenderWear.syncData();
 
-                        DataSenderWear dataSender = new DataSenderWear(context);
-                        dataSender.syncData();
                     }
                 }
             }

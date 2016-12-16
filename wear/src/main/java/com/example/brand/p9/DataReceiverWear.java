@@ -11,8 +11,6 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.WearableListenerService;
 
-import java.util.List;
-
 public class DataReceiverWear extends WearableListenerService {
 
     public String mMessage;
@@ -26,15 +24,18 @@ public class DataReceiverWear extends WearableListenerService {
                 DataItem dataItem = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
 
-                List<String> path = dataItem.getUri().getPathSegments();
-                String action = path.get(1);
+                String action = dataItem.getUri().getPathSegments().get(1);
 
-                if(action.equals("settings")){
-                    storeSettings(context, dataMap);
+                if(action.equals("SETTINGS")) {
+                    settingsHandler(context, dataMap);
+                } else if(action.equals("DAILYDATA")){
+                    dailyData(context,dataMap);
                 } else if(action.equals("message")){
                     message(dataMap);
                 } else if(action.equals("data")){
-                    dataHandler(context, dataMap);
+                    //dataHandler(context, dataMap);
+                } else if(action.equals("CALLBACK")){
+                    callback(context,dataMap);
                 }
 
 
@@ -42,18 +43,32 @@ public class DataReceiverWear extends WearableListenerService {
         }
     }
 
-    public void storeSettings(Context context, DataMap dataMap){
-
-        Log.d("DATA SETTINGS",dataMap.toString());
-        String UID = dataMap.getString("UID");
-        String partnerId = dataMap.getString("PARTNERID");
-        String partnerName = dataMap.getString("PARTNERNAME");
-        String userName = dataMap.getString("USERNAME");
-        String userGoal = dataMap.getString("USERGOAL");
-        String partnerGoal = dataMap.get("PARTNERGOAL");
+    private void dailyData(Context context, DataMap dataMap) {
+        Log.d("DAILY DATA RECEIVED",dataMap.toString());
+        String user = dataMap.getString("USER");
+        String unit = dataMap.getString("UNIT");
+        String day = dataMap.getString("DAY");
+        double value = dataMap.getDouble("VALUE");
 
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
-        localStorageWear.settings(UID,partnerId,userName,partnerName,userGoal,partnerGoal);
+        localStorageWear.updateDailyData(user,day,unit,value);
+    }
+
+    private void settingsHandler(Context context, DataMap dataMap) {
+        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+        localStorageWear.settings(dataMap);
+    }
+
+    private void callback(Context context, DataMap dataMap) {
+        LocalStorageWear localStorageWear = new LocalStorageWear(context);
+
+        Log.d("DATA",dataMap.toString());
+        String type = dataMap.getString("TYPE");
+        int id = dataMap.getInt("ID");
+
+        if(type.equals("STEP")){
+            localStorageWear.deleteStepData(id);
+        }
     }
     public void message(DataMap dataMap){
         mMessage = dataMap.get("message");
@@ -77,7 +92,7 @@ public class DataReceiverWear extends WearableListenerService {
         double value = dataMap.getDouble("VALUE");
 
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
-        localStorageWear.updateDailyData(unit,value,user,time);
+        //localStorageWear.updateDailyData(unit,value,user,time);
 
     }
 

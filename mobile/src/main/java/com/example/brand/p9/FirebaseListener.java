@@ -55,7 +55,8 @@ public class FirebaseListener extends Service {
                             localStorageMobile.deletePartnerSettings();
                         }
                     }
-                    localStorageMobile.storeData(dataToStore);
+                    dataToStore.put("UID",firebaseAuth.getCurrentUser().getUid());
+                    localStorageMobile.storeSettings(dataToStore);
                 }
 
                 @Override
@@ -74,7 +75,7 @@ public class FirebaseListener extends Service {
                 dataToStore.put("PARTNERGOAL",dataSnapshot.child("GOAL").getValue().toString());
 
                 LocalStorageMobile localStorageMobile = new LocalStorageMobile(getApplicationContext());
-                localStorageMobile.storeData(dataToStore);
+                localStorageMobile.storeSettings(dataToStore);
             }
 
             @Override
@@ -88,13 +89,14 @@ public class FirebaseListener extends Service {
             databaseReference.removeEventListener(eventListener);
         }
     }
-    private void listenForSteps(String partnerId) {
+    private void listenForSteps(final String partnerId) {
         if(!partnerId.equals("")){
             DatabaseReference databaseReference = firebaseDatabase.getReference("STEPS/"+partnerId);
             databaseReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Log.d("STEP","STEP");
+                    Long time = Long.parseLong(dataSnapshot.child("TIME").getValue().toString());
+                    localStorageMobile.updateDaily(partnerId,time,"STEP");
                 }
 
                 @Override

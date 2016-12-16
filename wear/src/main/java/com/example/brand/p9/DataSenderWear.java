@@ -31,14 +31,10 @@ public class DataSenderWear {
         if(dataToSend.moveToFirst()){
             do {
                 Long time = dataToSend.getLong(dataToSend.getColumnIndex("TIME"));
-                String unit = dataToSend.getString(dataToSend.getColumnIndex("UNIT"));
-                float value = dataToSend.getFloat(dataToSend.getColumnIndex("VALUE"));
                 final int id = dataToSend.getInt(dataToSend.getColumnIndex("ID"));
 
-                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/data/"+id);
+                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/STEP/"+id);
                 putDataMapReq.getDataMap().putLong("TIME",time);
-                putDataMapReq.getDataMap().putString("UNIT",unit);
-                putDataMapReq.getDataMap().putDouble("VALUE",value);
                 putDataMapReq.getDataMap().putInt("ID",id);
 
                 final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
@@ -47,8 +43,9 @@ public class DataSenderWear {
                     @Override
                     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
                         boolean success = dataItemResult.getStatus().isSuccess();
+                        Log.d("SUCCESS", String.valueOf(success));
                         if(success){
-                            localStorageWear.update(id);
+                            localStorageWear.updateStepData(id);
                         }
                     }
                 });

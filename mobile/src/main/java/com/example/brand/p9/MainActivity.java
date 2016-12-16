@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -45,7 +46,6 @@ public class MainActivity extends Activity {
         userName = localStorageMobile.getSettings().get("USERNAME");
         UID = localStorageMobile.getSettings().get("UID");
         partnerID = localStorageMobile.getSettings().get("PARTNERID");
-        localStorageMobile.deleteSettings();
 
         startService(new Intent(this, DataReceiverMobile.class));
         startService(new Intent(this, FirebaseListener.class));
@@ -74,8 +74,10 @@ public class MainActivity extends Activity {
         btMockPartnerStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String partner = "T9veiBXYCgeYlJGgrxndudTZDYG3";
-                firebaseWriter.writeStep(partner,1,"STEP",System.currentTimeMillis());
+                String partner = "GOdpKr4fhQO7L3j9zLPMas4ViMK2";
+                Long time = System.currentTimeMillis();
+                firebaseWriter.writeStep(partner,time);
+
             }
         });
 
@@ -83,15 +85,14 @@ public class MainActivity extends Activity {
         btMockUserStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String user = "GOdpKr4fhQO7L3j9zLPMas4ViMK2";
-                firebaseWriter.writeStep(user,1,"STEP",System.currentTimeMillis());
+                String user = "T9veiBXYCgeYlJGgrxndudTZDYG3";
+                int id = (int) System.currentTimeMillis();
+                Long time = System.currentTimeMillis();
+                localStorageMobile.storeStepData(time,id,user);
             }
         });
 
-        listenForMsg();
-        //listenForSteps();
-
-
+        //listenForMsg();
 
     }
 
@@ -135,46 +136,6 @@ public class MainActivity extends Activity {
         };
 
         listenerRef.limitToLast(1).addChildEventListener(messageListener);
-
-    }
-
-    public void listenForSteps(){
-        DatabaseReference stepListenerRef = mDatabase.getReference("steps/"+partnerID);
-        ChildEventListener stepListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                Log.d("STEP",dataSnapshot.toString());
-
-                String unit = dataSnapshot.child("UNIT").getValue().toString();
-                Long time = Long.parseLong(dataSnapshot.child("TIME").getValue().toString());
-                double value = Double.parseDouble(dataSnapshot.child("VALUE").getValue().toString());
-
-                String user = partnerID;
-                dataSenderMobile.sendData(unit,value,time,user);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        stepListenerRef.addChildEventListener(stepListener);
 
     }
 

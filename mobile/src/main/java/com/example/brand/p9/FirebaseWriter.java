@@ -16,12 +16,10 @@ public class FirebaseWriter {
         //DEFAULT CONSTRUCTOR
     }
 
-    public void writeStep(String user, double value, String unit, Long time){
+    public void writeStep(String user, Long time){
         DatabaseReference databaseReference = firebaseDatabase.getReference("STEPS/"+user);
-        HashMap<String, String> stepData= new HashMap<>();
 
-        stepData.put("UNIT",unit);
-        stepData.put("VALUE", String.valueOf(value));
+        HashMap<String, String> stepData= new HashMap<>();
         stepData.put("TIME", String.valueOf(time));
         databaseReference.push().setValue(stepData);
     }
