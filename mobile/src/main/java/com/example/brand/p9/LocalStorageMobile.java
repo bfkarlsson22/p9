@@ -27,7 +27,8 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
     private Context context;
     private static final String DB_NAME = "LocalStorage";
     private static final int DB_VERSION = 1;
-    int ACTIVITY_LIMIT_MIN = 2;
+    int ACTIVITY_LIMIT_MIN = 1;
+    int STEPS_FOR_ACTIVENESS = 20;
     FirebaseWriter firebaseWriter = new FirebaseWriter();
 
     public LocalStorageMobile(Context context){
@@ -78,6 +79,7 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
 
         firebaseWriter.writeStep(user,time);
         updateDaily(user,time,"STEP");
+        checkActiveness();
     }
 
     public boolean checkDaily(String user, Long time, String unit){
@@ -104,8 +106,12 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
         }
         String query = "UPDATE DAILYDATA SET VALUE=VALUE+1 WHERE USER='"+user+"' AND DAY='"+day+"' AND UNIT='"+unit+"'";
         db.execSQL(query);
-        Log.d("ALL DATA", DatabaseUtils.dumpCursorToString(getAllData()));
+        //Log.d("ALL DATA", DatabaseUtils.dumpCursorToString(getAllData()));
         syncDailyToWear();
+        if(checkActiveness()){
+            Log.d("THE USER IS NOW ACTIVE","TRUE");
+        }
+        cleanDatabase();
     }
 
     private void syncDailyToWear() {
@@ -151,9 +157,28 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
     private void cleanDatabase() {
         SQLiteDatabase db = getWritableDatabase();
         Long time = System.currentTimeMillis();
-        String timeLimit = String.valueOf(time-(ACTIVITY_LIMIT_MIN*60000));
+        String timeLimit = String.valueOf(time-((2*ACTIVITY_LIMIT_MIN)*60000));
         String query = "DELETE FROM STEPDATA WHERE TIME < "+timeLimit;
         db.execSQL(query);
+    }
+
+    private boolean checkActiveness(){
+        SQLiteDatabase db = getReadableDatabase();
+        Long time = System.currentTimeMillis();
+        String timeLimit = String.valueOf(time-(ACTIVITY_LIMIT_MIN*60000));
+        String query = "SELECT * FROM STEPDATA WHERE TIME > "+timeLimit+"";
+        Cursor cursor = db.rawQuery(query,null);
+        Log.d("STEPS", String.valueOf(cursor.getCount()));
+
+        if(cursor.getCount() > STEPS_FOR_ACTIVENESS){
+            Log.d("ACTIVE","ACTIVE");
+            return true;
+        } else {
+            int missing = STEPS_FOR_ACTIVENESS - cursor.getCount();
+            Log.d("MISSING", "MISSING: "+String.valueOf(missing)+" STEPS");
+            Log.d("NOT ACTIVE", "NOT ACTIVE");
+            return false;
+        }
     }
 }
 
