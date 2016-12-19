@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -98,7 +97,7 @@ public class FirebaseListener extends Service {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Long time = Long.parseLong(dataSnapshot.child("TIME").getValue().toString());
-                    localStorageMobile.updateDaily(partnerId,time,"STEP");
+                    localStorageMobile. updateDaily(partnerId,time,"STEP");
                 }
 
                 @Override

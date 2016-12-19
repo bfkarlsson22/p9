@@ -75,7 +75,15 @@ public class WatchFaceService extends CanvasWatchFaceService {
                 partnerSteps = 0;
             }
 
-            userGoal = Double.parseDouble(settings.get("GOAL"));
+
+            if (settings.get("GOAL") != null) {
+                userGoal = Double.parseDouble(settings.get("GOAL"));
+
+            }else{
+                userGoal = 1;
+            }
+
+
             if(settings.get("PARTNERGOAL") != null) {
                 partnerGoal = Double.parseDouble(settings.get("PARTNERGOAL"));
             } else {

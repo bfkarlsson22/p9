@@ -2,7 +2,6 @@ package com.example.brand.p9;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.DatabaseUtils;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
-import android.view.View;
 
 public class WearActivity extends WearableActivity {
 
@@ -44,7 +42,8 @@ public class WearActivity extends WearableActivity {
                 stub.setOnTouchListener(new OnSwipeTouchListener(context){
                     @Override
                     public void onSwipeLeft(){
-
+                        Intent intent = new Intent(WearActivity.this, StepsDetail.class);
+                        startActivity(intent);
                     }
                     @Override
                     public void onSwipeRight(){

@@ -31,6 +31,12 @@
             android:label="SendMsg"
             android:theme="@style/Theme.Wearable.Modal"
             ></activity>
+        <activity
+        android:name=".StepsDetail"
+        android:label="StepsDetail"
+        android:theme="@style/Theme.Wearable.Modal"
+        ></activity>
+
         <activity android:name="android.support.wearable.activity.ConfirmationActivity" />
         <activity
             android:name=".ReadReplyActivity"
