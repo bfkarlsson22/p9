@@ -12,6 +12,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -94,11 +95,23 @@ public class FirebaseListener extends Service {
     private void listenForSteps(final String partnerId) {
         if(!partnerId.equals("")){
             DatabaseReference databaseReference = firebaseDatabase.getReference("STEPS/"+partnerId);
-            databaseReference.addChildEventListener(new ChildEventListener() {
+
+            HashMap<String, String> settings = localStorageMobile.getSettings();
+            Query query;
+            if(settings.get("LATEST STEP") != null){
+                query = databaseReference.orderByKey().startAt(settings.get("LATEST STEP"));
+            } else {
+                query = databaseReference.orderByKey();
+            }
+            query.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Long time = Long.parseLong(dataSnapshot.child("TIME").getValue().toString());
                     localStorageMobile.updateDaily(partnerId,time,"STEP");
+
+                    HashMap<String, String> latestStep = new HashMap<>();
+                    latestStep.put("LATEST STEP",dataSnapshot.getKey());
+                    localStorageMobile.storeSettings(latestStep);
                 }
 
                 @Override
