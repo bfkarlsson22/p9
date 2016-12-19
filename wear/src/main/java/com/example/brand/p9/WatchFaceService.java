@@ -62,8 +62,11 @@ public class WatchFaceService extends CanvasWatchFaceService {
             String day = simpleDateFormat.format(new Date(time));
 
             Cursor cursorUser = localStorageWear.getDailyData(settings.get("UID"),"STEP",day);
-            cursorUser.moveToFirst();
-            userSteps = cursorUser.getDouble(cursorUser.getColumnIndex("VALUE"));
+            if(cursorUser.moveToFirst()) {
+                userSteps = cursorUser.getDouble(cursorUser.getColumnIndex("VALUE"));
+            } else {
+                userSteps = 0;
+            }
 
             Cursor cursorCompetitor = localStorageWear.getDailyData(settings.get("PARTNER"),"STEP",day);
             if(cursorCompetitor.moveToFirst()){
