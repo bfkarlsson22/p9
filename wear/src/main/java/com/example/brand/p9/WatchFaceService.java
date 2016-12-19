@@ -113,6 +113,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             paintStepsUser.setColor(Color.parseColor("#4CAF50"));
             paintStepsUser.setStyle(Paint.Style.STROKE);
             paintStepsUser.setStrokeWidth(10);
+
             paintStepsUser.setAntiAlias(true);
 
             Paint paintStepsCompetitor = new Paint();

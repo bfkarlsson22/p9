@@ -6,7 +6,11 @@
                                               xmlns:app="http://schemas.android.com/apk/res-auto"
                                               android:orientation="vertical"
                                               tools:context=".SendMsgActivity">
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        app:layout_box="all">
 
     <android.support.wearable.view.WearableListView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,5 +19,6 @@
         android:id="@+id/sample_list_view"
         app:layout_box="all"
         />
+    </FrameLayout>
 
 </android.support.wearable.view.BoxInsetLayout>
