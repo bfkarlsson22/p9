@@ -4,19 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
-
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +18,7 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
     private Context context;
     private static final String DB_NAME = "LocalStorage";
     private static final int DB_VERSION = 1;
+
     int ACTIVITY_LIMIT_MIN = 1;
     int STEPS_FOR_ACTIVENESS = 20;
     FirebaseWriter firebaseWriter = new FirebaseWriter();
@@ -79,7 +71,9 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
 
         firebaseWriter.writeStep(user,time);
         updateDaily(user,time,"STEP");
-        checkActiveness();
+        if(checkActiveness()){
+            updateDaily(user,time,"MINUTE");
+        }
     }
 
     public boolean checkDaily(String user, Long time, String unit){
@@ -108,9 +102,6 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
         db.execSQL(query);
         //Log.d("ALL DATA", DatabaseUtils.dumpCursorToString(getAllData()));
         syncDailyToWear();
-        if(checkActiveness()){
-            Log.d("THE USER IS NOW ACTIVE","TRUE");
-        }
         cleanDatabase();
     }
 
@@ -157,7 +148,7 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
     private void cleanDatabase() {
         SQLiteDatabase db = getWritableDatabase();
         Long time = System.currentTimeMillis();
-        String timeLimit = String.valueOf(time-((2*ACTIVITY_LIMIT_MIN)*60000));
+        String timeLimit = String.valueOf(time-((1*ACTIVITY_LIMIT_MIN)*60000));
         String query = "DELETE FROM STEPDATA WHERE TIME < "+timeLimit;
         db.execSQL(query);
     }
@@ -169,9 +160,14 @@ public class LocalStorageMobile extends SQLiteOpenHelper {
         String query = "SELECT * FROM STEPDATA WHERE TIME > "+timeLimit+"";
         Cursor cursor = db.rawQuery(query,null);
         Log.d("STEPS", String.valueOf(cursor.getCount()));
-
         if(cursor.getCount() > STEPS_FOR_ACTIVENESS){
             Log.d("ACTIVE","ACTIVE");
+            SQLiteDatabase delete = getWritableDatabase();
+            if(cursor.moveToFirst()){
+                do {
+                    delete.execSQL("DELETE FROM STEPDATA WHERE ID=" + cursor.getInt(cursor.getColumnIndex("ID")));
+                } while(cursor.moveToNext());
+            }
             return true;
         } else {
             int missing = STEPS_FOR_ACTIVENESS - cursor.getCount();

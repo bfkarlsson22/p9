@@ -49,7 +49,6 @@ public class StepsDetail extends WearableActivity {
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-
                 stub.setOnTouchListener(new OnSwipeTouchListener(mContext){
                     @Override
                     public void onSwipeLeft(){
@@ -92,7 +91,7 @@ public class StepsDetail extends WearableActivity {
             userSteps=0;
         }
 
-        Cursor cursorCompetitor = localStorageWear.getDailyData(localStorageWear.getSettings().get("PARTNERID"),"STEP",day);
+        Cursor cursorCompetitor = localStorageWear.getDailyData(localStorageWear.getSettings().get("PARTNER"),"STEP",day);
         if(cursorCompetitor.moveToFirst()){
             partnerSteps = cursorCompetitor.getDouble(cursorCompetitor.getColumnIndex("VALUE"));
         } else {
@@ -113,43 +112,6 @@ public class StepsDetail extends WearableActivity {
 
         //  goalPartner = localStorageWear.getSettings().get("PARTNERGOAL");
         //partnerGoal = Integer.parseInt(goalPartner);
-        userProgress();
-        partnerProgress();
-
-    }
-
-    public void userProgress(){
-        new Thread(new Runnable() {
-            public void run() {
-                while (mProgressStatus < 1000) {
-                    mProgressStatus = (int) userSteps;
-
-                    // Update the progress bar
-                    mHandler.post(new Runnable() {
-                        public void run() {
-                            mProgress.setProgress(mProgressStatus);
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    public void partnerProgress(){
-        new Thread(new Runnable() {
-            public void run() {
-                while (mPartnerProgressStatus < 1000) {
-                    mPartnerProgressStatus = (int) partnerSteps;
-
-                    // Update the progress bar
-                    mHandler.post(new Runnable() {
-                        public void run() {
-                            mPartnerProgress.setProgress(mPartnerProgressStatus);
-                        }
-                    });
-                }
-            }
-        }).start();
     }
 
 }
