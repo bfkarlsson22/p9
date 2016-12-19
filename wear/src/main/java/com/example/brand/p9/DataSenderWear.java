@@ -2,6 +2,7 @@ package com.example.brand.p9;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -22,20 +23,20 @@ public class DataSenderWear {
     }
 
 
-    public void syncData(){
+    public void syncData() {
         buildApi();
 
         final LocalStorageWear localStorageWear = new LocalStorageWear(context);
         Cursor dataToSend = localStorageWear.getUnsentUserData();
 
-        if(dataToSend.moveToFirst()){
+        if (dataToSend.moveToFirst()) {
             do {
                 Long time = dataToSend.getLong(dataToSend.getColumnIndex("TIME"));
                 final int id = dataToSend.getInt(dataToSend.getColumnIndex("ID"));
 
-                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/STEP/"+id);
-                putDataMapReq.getDataMap().putLong("TIME",time);
-                putDataMapReq.getDataMap().putInt("ID",id);
+                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/STEP/" + id);
+                putDataMapReq.getDataMap().putLong("TIME", time);
+                putDataMapReq.getDataMap().putInt("ID", id);
 
                 final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
 
@@ -44,7 +45,7 @@ public class DataSenderWear {
                     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
                         boolean success = dataItemResult.getStatus().isSuccess();
                         Log.d("SUCCESS", String.valueOf(success));
-                        if(success){
+                        if (success) {
                             localStorageWear.updateStepData(id);
                         }
                     }
@@ -55,21 +56,20 @@ public class DataSenderWear {
     }
 
 
-
-    public void sendMsgtoPhone(String message, String reply, String partnerUID){
+    public void sendMsgtoPhone(String message, String reply, String partnerUID) {
         buildApi();
         String timer = String.valueOf(System.currentTimeMillis());
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/message/"+timer);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/message/" + timer);
         putDataMapReq.getDataMap().putString("message", message);
         putDataMapReq.getDataMap().putString("reply", reply);
         putDataMapReq.getDataMap().putString("partnerUID", partnerUID);
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
-        Wearable.DataApi.putDataItem(googleApiClient,putDataReq);
-        Log.d("5555", message+reply);
+        Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
+        Log.d("5555", message + reply);
 
     }
 
-    public void buildApi(){
+    public void buildApi() {
         googleApiClient = new GoogleApiClient.Builder(context).addApi(Wearable.API).build();
         googleApiClient.connect();
     }

@@ -33,7 +33,6 @@ public class WearActivity extends WearableActivity {
         localStorageWear = new LocalStorageWear(context);
         dataSenderWear = new DataSenderWear(context);
 
-
         UID = localStorageWear.getSettings().get("UID");
         partnerUID = localStorageWear.getSettings().get("UID"); //change to PARTNERID
 
@@ -42,7 +41,6 @@ public class WearActivity extends WearableActivity {
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                setupWidgets();
                 stub.setOnTouchListener(new OnSwipeTouchListener(context){
                     @Override
                     public void onSwipeLeft(){
@@ -60,15 +58,7 @@ public class WearActivity extends WearableActivity {
 
         });
         setUpStepCounter();
-    }
 
-    public void setupWidgets() {
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
     }
 
     public void setUpStepCounter(){
@@ -82,7 +72,6 @@ public class WearActivity extends WearableActivity {
                     if (event.values.length > 0) {
                         localStorageWear.addStepData(System.currentTimeMillis());
                         dataSenderWear.syncData();
-
                     }
                 }
             }
@@ -92,7 +81,4 @@ public class WearActivity extends WearableActivity {
         };
         mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
-
-
-
 }
