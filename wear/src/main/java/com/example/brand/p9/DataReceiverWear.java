@@ -84,17 +84,6 @@ public class DataReceiverWear extends WearableListenerService {
 
 
     }
-    public void dataHandler(Context context, DataMap dataMap){
-        Log.d("DATA",dataMap.toString());
-        String unit = dataMap.get("UNIT");
-        String user = dataMap.get("USER");
-        Long time = dataMap.getLong("TIME");
-        double value = dataMap.getDouble("VALUE");
-
-        LocalStorageWear localStorageWear = new LocalStorageWear(context);
-        //localStorageWear.updateDailyData(unit,value,user,time);
-
-    }
 
 
 }

@@ -1,5 +1,7 @@
 package com.example.brand.p9;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,12 +9,14 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by EmilSiegenfeldt on 01/12/2016.
@@ -27,9 +31,10 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         private double userSteps;
         private double userGoal;
-        private double competitorSteps;
-        private double competitorGoal;
-
+        private double partnerSteps;
+        private double partnerGoal;
+        private LocalStorageWear localStorageWear = new LocalStorageWear(getApplicationContext());
+        private DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
@@ -46,31 +51,34 @@ public class WatchFaceService extends CanvasWatchFaceService {
         public void onTimeTick() {
             super.onTimeTick();
             /* the time changed */
-            Log.d("TIK","TOK");
 
-            DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
+            Log.d("BATTERY LEVEL", String.valueOf(batteryMonitor()));
+
+            HashMap<String, String> settings = localStorageWear.getSettings();
             dataSender.syncData();
 
-            LocalStorageWear localStorageWear = new LocalStorageWear(getApplicationContext());
-            Log.d("SETTINGS",localStorageWear.getSettings().toString());
             Long time = System.currentTimeMillis();
             java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
             String day = simpleDateFormat.format(new Date(time));
 
-            Cursor cursorUser = localStorageWear.getDailyData(localStorageWear.getSettings().get("UID"),"STEP",day);
+            Cursor cursorUser = localStorageWear.getDailyData(settings.get("UID"),"STEP",day);
             cursorUser.moveToFirst();
             userSteps = cursorUser.getDouble(cursorUser.getColumnIndex("VALUE"));
-            Log.d("USERSTEPS", String.valueOf(userSteps));
 
-            Cursor cursorCompetitor = localStorageWear.getDailyData(localStorageWear.getSettings().get("PARTNERID"),"STEP",day);
+            Cursor cursorCompetitor = localStorageWear.getDailyData(settings.get("PARTNER"),"STEP",day);
             if(cursorCompetitor.moveToFirst()){
-                competitorSteps = cursorCompetitor.getDouble(cursorCompetitor.getColumnIndex("VALUE"));
+                partnerSteps = cursorCompetitor.getDouble(cursorCompetitor.getColumnIndex("VALUE"));
             } else {
-                competitorSteps = 0;
+                partnerSteps = 0;
             }
 
-            userGoal = Double.parseDouble(localStorageWear.getSettings().get("USERGOAL"));
-            competitorGoal = Double.parseDouble(localStorageWear.getSettings().get("PARTNERGOAL"));
+            userGoal = Double.parseDouble(settings.get("GOAL"));
+            if(settings.get("PARTNERGOAL") != null) {
+                partnerGoal = Double.parseDouble(settings.get("PARTNERGOAL"));
+            } else {
+                partnerGoal = 1;
+            }
+
 
             invalidate();
         }
@@ -132,7 +140,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             paintStepCounterCompetitor.setAntiAlias(true);
 
             float userSweepAngle = calcSweepAngle(userSteps,userGoal);
-            float competitorSweepAngle = calcSweepAngle(competitorSteps,competitorGoal);
+            float competitorSweepAngle = calcSweepAngle(partnerSteps, partnerGoal);
 
             //DRAW USERS GRAPHS
             RectF rectUser = new RectF(left,top,right,bottom);
@@ -152,10 +160,10 @@ public class WatchFaceService extends CanvasWatchFaceService {
             //DRAW STEP COUNTERS
 
             float userStepXOffset = calcXOffset(String.valueOf(userSteps),paintStepCounterUser,bounds);
-            float competitorXOffset = calcXOffset(String.valueOf(competitorSteps),paintStepCounterCompetitor,bounds);
+            float competitorXOffset = calcXOffset(String.valueOf(partnerSteps),paintStepCounterCompetitor,bounds);
 
             canvas.drawText(String.valueOf(userSteps),userStepXOffset,bounds.centerY()-80,paintStepCounterUser);
-            canvas.drawText(String.valueOf(competitorSteps),competitorXOffset, bounds.centerY()-50,paintStepCounterCompetitor);
+            canvas.drawText(String.valueOf(partnerSteps),competitorXOffset, bounds.centerY()-50,paintStepCounterCompetitor);
 
 
         }
@@ -187,6 +195,17 @@ public class WatchFaceService extends CanvasWatchFaceService {
                 sweepAngle = 180;
             }
             return sweepAngle;
+        }
+
+        private float batteryMonitor(){
+
+            Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE,-1);
+
+            float batteryLevel = ((float)level / (float)scale)*100.0f;
+
+            return batteryLevel;
         }
     }
 }

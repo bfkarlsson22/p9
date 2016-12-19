@@ -50,7 +50,6 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         values.put("SENT",0);
 
         db.insert("STEPDATA",null,values);
-        db.close();
 
         java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
         String day = simpleDateFormat.format(new Date(time));
@@ -91,7 +90,6 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String query = "UPDATE STEPDATA SET SENT = 1 WHERE ID="+id;
         db.execSQL(query);
-
     }
     public void deleteStepData(int id) {
         SQLiteDatabase db = getWritableDatabase();
@@ -130,7 +128,7 @@ public class LocalStorageWear extends SQLiteOpenHelper {
     }
     public boolean checkDailyData(String user, String day, String unit){
         SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT id FROM DAILYDATA WHERE USER='"+user+"' AND DAY='"+day+"' AND UNIT='"+unit+"'";
+        String query = "SELECT ID FROM DAILYDATA WHERE USER='"+user+"' AND DAY='"+day+"' AND UNIT='"+unit+"'";
         Cursor cursor = db.rawQuery(query,null);
         if(cursor.getCount() < 1){
             return false;

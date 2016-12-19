@@ -36,6 +36,7 @@ public class FirebaseListener extends Service {
 
         if(firebaseAuth.getCurrentUser().getUid() != null) {
             listenForUserData();
+
         }
 
     }
@@ -89,6 +90,7 @@ public class FirebaseListener extends Service {
             databaseReference.removeEventListener(eventListener);
         }
     }
+
     private void listenForSteps(final String partnerId) {
         if(!partnerId.equals("")){
             DatabaseReference databaseReference = firebaseDatabase.getReference("STEPS/"+partnerId);
