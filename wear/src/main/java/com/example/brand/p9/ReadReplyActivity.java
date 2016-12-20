@@ -74,6 +74,7 @@ public class ReadReplyActivity extends WearableActivity {
 
         });
         context = this;
+        //as
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
         userUID = localStorageWear.getSettings().get("UID");
         partnerUID = localStorageWear.getSettings().get("PARTNER");
