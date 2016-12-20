@@ -17,34 +17,33 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.Wearable.Modal"
             >
+        </activity>
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="false" />
+
+        <activity
+            android:name=".SendMsgActivity"
+            android:label="SendMsg"
+            android:theme="@style/Theme.Wearable.Modal" />
+        <activity
+            android:name=".DetailActivity"
+            android:label="StepDetail"
+            android:theme="@style/Theme.Wearable.Modal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <uses-library
-            android:name="com.google.android.wearable"
-            android:required="false" />
-        <activity
-            android:name=".SendMsgActivity"
-            android:label="SendMsg"
-            android:theme="@style/Theme.Wearable.Modal"
-            ></activity>
-        <activity
-            android:name=".DetailActivity"
-            android:label="StepDetail"
-            android:theme="@style/Theme.Wearable.Modal"
-            ></activity>
         <activity
             android:name=".History"
             android:label="History"
-            android:theme="@style/Theme.Wearable.Modal"
-            ></activity>
+            android:theme="@style/Theme.Wearable.Modal" />
         <activity android:name="android.support.wearable.activity.ConfirmationActivity" />
         <activity
             android:name=".ReadReplyActivity"
-            android:label="Communication"></activity>
+            android:label="Communication" />
 
         <service android:name=".WatchFaceService"
             android:label="@string/app_name"

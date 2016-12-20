@@ -45,8 +45,7 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
                 stub.setOnTouchListener(new OnSwipeTouchListener(mContext) {
                     @Override
                     public void onSwipeLeft() {
-                        Intent intent = new Intent(SendMsgActivity.this, WearActivity.class);
-                        startActivity(intent);
+                        onBackPressed();
                     }
 
                     @Override

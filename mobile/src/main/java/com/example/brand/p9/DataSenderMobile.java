@@ -54,8 +54,8 @@ public class DataSenderMobile {
     }
     public void sendSettings(HashMap<String, String> settings) {
         buildApi();
-
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/SETTINGS/");
+        Long time = System.currentTimeMillis();
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/mobile/SETTINGS/"+time);
 
         for(Map.Entry<String, String> dataToSend : settings.entrySet()){
             putDataMapReq.getDataMap().putString(dataToSend.getKey(), dataToSend.getValue());

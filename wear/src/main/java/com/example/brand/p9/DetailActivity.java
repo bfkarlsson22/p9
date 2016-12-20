@@ -8,6 +8,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
@@ -23,6 +27,9 @@ public class DetailActivity extends WearableActivity {
 
     private Context context = this;
     private ImageView backgroundCanvas;
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
+    public SensorEventListener mStepListener;
     int height;
     int width;
     LocalStorageWear localStorageWear = new LocalStorageWear(context);
@@ -31,6 +38,7 @@ public class DetailActivity extends WearableActivity {
     String UID;
     String partnerID;
     HashMap<String, String> settings;
+    DataSenderWear dataSenderWear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +51,25 @@ public class DetailActivity extends WearableActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
         settings = localStorageWear.getSettings();
+        dataSenderWear = new DataSenderWear(context);
 
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
 
                 settings = localStorageWear.getSettings();
-                Long time = System.currentTimeMillis();
-                java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
-                day = simpleDateFormat.format(new Date(time));
+                if(getIntent() != null && getIntent().getStringExtra("DAY") != null){
+                    Intent intent = getIntent();
+                    day = intent.getStringExtra("DAY");
+                } else {
+                    Long time = System.currentTimeMillis();
+                    java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat("E-d-M-y");
+                    day = simpleDateFormat.format(new Date(time));
+                }
+
                 UID = settings.get("UID");
                 partnerID = settings.get("PARTNER");
+                setUpStepCounter();
 
                 backgroundCanvas = (ImageView) findViewById(R.id.backgroundCanvas);
                 drawSteps();
@@ -68,7 +84,8 @@ public class DetailActivity extends WearableActivity {
                             drawActivity();
                         }
                         if(screen > 1){
-                            Log.d("START HISTORY","TRUE");
+                            Intent intent = new Intent(DetailActivity.this,History.class);
+                            startActivity(intent);
                         }
 
                     }
@@ -80,7 +97,7 @@ public class DetailActivity extends WearableActivity {
                             drawSteps();
                         }
                         if(screen < 0){
-                            Intent intent = new Intent(DetailActivity.this, WearActivity.class);
+                            Intent intent = new Intent(DetailActivity.this, SendMsgActivity.class);
                             startActivity(intent);
                         }
 
@@ -136,12 +153,12 @@ public class DetailActivity extends WearableActivity {
         int bottom = centerY+centerY;
 
         float xOffsetHeadLine = calcXOffset("AKTIVE MINUTTER",headLinePaint,centerX);
-        canvas.drawText("AKTIVE MINUTTER",xOffsetHeadLine,top+50,headLinePaint);
+        canvas.drawText("AKTIVE MINUTTER",xOffsetHeadLine,top+75,headLinePaint);
 
         String translatedDay = formatDate(day);
 
         float xOffsetDay = calcXOffset(translatedDay,smallTextPaint,centerX);
-        canvas.drawText(translatedDay,xOffsetDay,top+70,smallTextPaint);
+        canvas.drawText(translatedDay,xOffsetDay,top+95,smallTextPaint);
 
         double userMinutes = getData(day,UID,"MINUTE");
         double partnerMinutes = getData(day,partnerID,"MINUTE");
@@ -222,12 +239,12 @@ public class DetailActivity extends WearableActivity {
 
 
         float xOffsetHeadLine = calcXOffset("FREMSKRIDT",headLinePaint,centerX);
-        canvas.drawText("FREMSKRIDT",xOffsetHeadLine,top+30,headLinePaint);
+        canvas.drawText("FREMSKRIDT",xOffsetHeadLine,top+75,headLinePaint);
 
         String translatedDay = formatDate(day);
 
         float xOffsetDay = calcXOffset(translatedDay,smallTextPaint,centerX);
-        canvas.drawText(translatedDay,xOffsetDay,top+50,smallTextPaint);
+        canvas.drawText(translatedDay,xOffsetDay,top+95,smallTextPaint);
 
 
         double userSteps = getData(day,UID,"STEP");
@@ -305,6 +322,26 @@ public class DetailActivity extends WearableActivity {
         float progress = (float) ((value/goal)*100);
         float graphLength = (graphBounds/100)*progress;
         return graphLength;
+    }
+    public void setUpStepCounter(){
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+        mStepListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
+                    if (event.values.length > 0) {
+                        localStorageWear.addStepData(System.currentTimeMillis());
+                        dataSenderWear.syncData();
+                    }
+                }
+            }
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
+        };
+        mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
 }

@@ -35,6 +35,9 @@ public class WatchFaceService extends CanvasWatchFaceService {
         private double userSteps;
         private double userGoal;
         private double partnerSteps;
+        private double userMinutes;
+        private double partnerMinutes;
+        private double minuteGoal = 30;
         private double partnerGoal;
         private LocalStorageWear localStorageWear = new LocalStorageWear(getApplicationContext());
         private DataSenderWear dataSender = new DataSenderWear(getApplicationContext());
@@ -48,7 +51,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onTapCommand(@TapType int tapType, int x, int y, long eventTime){
-            Intent intent = new Intent(WatchFaceService.this,WearActivity.class);
+            Intent intent = new Intent(WatchFaceService.this,DetailActivity.class);
             intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
             switch (tapType) {
                 case WatchFaceService.TAP_TYPE_TAP:
@@ -108,6 +111,20 @@ public class WatchFaceService extends CanvasWatchFaceService {
                 partnerSteps = cursorCompetitor.getDouble(cursorCompetitor.getColumnIndex("VALUE"));
             } else {
                 partnerSteps = 0;
+            }
+
+            Cursor cursorPartnerMinute = localStorageWear.getDailyData(settings.get("PARTNER"),"MINUTE",day);
+            if(cursorPartnerMinute.moveToFirst()){
+                partnerMinutes = cursorPartnerMinute.getDouble(cursorPartnerMinute.getColumnIndex("VALUE"));
+            } else {
+                partnerMinutes = 0;
+            }
+
+            Cursor cursorUserMinute = localStorageWear.getDailyData(settings.get("UID"),"MINUTE",day);
+            if(cursorUserMinute.moveToFirst()){
+                userMinutes = cursorUserMinute.getDouble(cursorUserMinute.getColumnIndex("VALUE"));
+            } else {
+                userMinutes = 0;
             }
 
             userGoal = Double.parseDouble(settings.get("GOAL"));
@@ -181,15 +198,19 @@ public class WatchFaceService extends CanvasWatchFaceService {
             float userSweepAngle = calcSweepAngle(userSteps,userGoal);
             float competitorSweepAngle = calcSweepAngle(partnerSteps, partnerGoal);
 
+            float userActivitySweepAngle = calcSweepAngle(userMinutes,minuteGoal);
+            float partnerActivitySweepAngle = calcSweepAngle(partnerMinutes,minuteGoal);
+
+
             //DRAW USERS GRAPHS
             RectF rectUser = new RectF(left,top,right,bottom);
             canvas.drawArc (rectUser, 180, userSweepAngle, false, paintStepsUser);
-            canvas.drawArc(rectUser,180,-120,false,paintActivity);
+            canvas.drawArc(rectUser,180,-userActivitySweepAngle,false,paintActivity);
 
             //DRAW COMPETITORS GRAPHS
             RectF rectCompetitor = new RectF(left+20,top+20,right-20,bottom-20);
             canvas.drawArc(rectCompetitor,180,competitorSweepAngle,false,paintStepsCompetitor);
-            canvas.drawArc(rectCompetitor,180,-90,false,paintActivity);
+            canvas.drawArc(rectCompetitor,180,-partnerActivitySweepAngle,false,paintActivity);
 
             //DRAW CLOCK
             float timeXOffset = calcXOffset(formattedTime,paintTime,bounds);
@@ -227,8 +248,12 @@ public class WatchFaceService extends CanvasWatchFaceService {
             return center + (textHeight /2.0f);
         }
 
-        public float calcSweepAngle(double steps, double goal){
-            float progress = (float) ((steps/goal)*100);
+        public float calcSweepAngle(double value, double goal){
+
+            Log.d("VALUE", String.valueOf(value));
+            Log.d("GOAL", String.valueOf(goal));
+
+            float progress = (float) ((value/goal)*100);
             float sweepAngle = (float)(progress*1.8);
             if(sweepAngle > 180){
                 sweepAngle = 180;
@@ -245,13 +270,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
             float batteryLevel = ((float)level / (float)scale)*100.0f;
 
             return batteryLevel;
-        }
-        private void writeToLog(){
-            HashMap<String,String> logItem = new HashMap<>();
-            logItem.put("MESSAGE","LOW BATTERY WEAR");
-            logItem.put("VALUE", String.valueOf(batteryMonitor()));
-            logItem.put("TIME", String.valueOf(System.currentTimeMillis()));
-            dataSender.putToLog(logItem);
         }
     }
 }

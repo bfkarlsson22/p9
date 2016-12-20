@@ -1,6 +1,7 @@
 package com.example.brand.p9;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
@@ -49,8 +50,8 @@ public class History extends WearableActivity implements WearableListView.ClickL
                 listView = (WearableListView) stub.findViewById(R.id.sample_list_view);
                 loadAdapter();
                 localStorageWear = new LocalStorageWear(mContext);
-                userHash = new HashMap<String, String>();
-                partnerHash = new HashMap<String, String>();
+                userHash = new HashMap<>();
+                partnerHash = new HashMap<>();
                 settings = localStorageWear.getSettings();
                 userName = localStorageWear.getSettings().get("NAME");
                 partnerName = localStorageWear.getSettings().get("PARTNERNAME");
@@ -60,6 +61,21 @@ public class History extends WearableActivity implements WearableListView.ClickL
                 setGoals();
                 getInfo();
                 calcWinner();
+
+                stub.setOnTouchListener(new OnSwipeTouchListener(mContext) {
+                    @Override
+                    public void onSwipeLeft() {
+
+                    }
+
+                    @Override
+                    public void onSwipeRight() {
+                        //Intent intent = new Intent(History.this, DetailActivity.class);
+                        //startActivity(intent);
+                        onBackPressed();
+                    }
+                });
+
             }
 
 
@@ -178,7 +194,10 @@ public class History extends WearableActivity implements WearableListView.ClickL
     }
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-
+        Log.d("POSITION", String.valueOf(viewHolder.getPosition()));
+        Intent intent = new Intent(History.this,DetailActivity.class);
+        intent.putExtra("DAY",items.get(viewHolder.getPosition()).day);
+        startActivity(intent);
     }
 
     @Override

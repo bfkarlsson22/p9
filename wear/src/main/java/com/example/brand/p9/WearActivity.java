@@ -74,28 +74,5 @@ public class WearActivity extends WearableActivity {
 
 
         });
-        setUpStepCounter();
-
-    }
-
-    public void setUpStepCounter(){
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
-        mStepListener = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                if (event.sensor.getType() == android.hardware.Sensor.TYPE_STEP_COUNTER) {
-                    if (event.values.length > 0) {
-                        localStorageWear.addStepData(System.currentTimeMillis());
-                        dataSenderWear.syncData();
-                    }
-                }
-            }
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            }
-        };
-        mSensorManager.registerListener(mStepListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 }
