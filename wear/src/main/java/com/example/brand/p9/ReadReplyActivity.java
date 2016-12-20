@@ -115,7 +115,7 @@ public class ReadReplyActivity extends WearableActivity {
                         String message = "LIKE";
                         String reply = "true";
                         mReplySender.sendMsgtoPhone(message, reply, partnerUID);
-                        Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
+                        Intent intent = new Intent(ReadReplyActivity.this, DetailActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -126,7 +126,7 @@ public class ReadReplyActivity extends WearableActivity {
                         String message = "DISLIKE";
                         String reply = "true";
                         mReplySender.sendMsgtoPhone(message, reply,partnerUID);
-                        Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
+                        Intent intent = new Intent(ReadReplyActivity.this, DetailActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -141,7 +141,7 @@ public class ReadReplyActivity extends WearableActivity {
         mTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Intent intent = new Intent(ReadReplyActivity.this, WearActivity.class);
+                Intent intent = new Intent(ReadReplyActivity.this, DetailActivity.class);
                 startActivity(intent);
                 return false;
             }

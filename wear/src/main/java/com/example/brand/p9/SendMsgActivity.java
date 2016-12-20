@@ -88,7 +88,7 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
     public void onClick(WearableListView.ViewHolder viewHolder) {
         switch (viewHolder.getPosition()) {
             case 0:
-                mMessageSender.sendMsgtoPhone(message0, "false", "GOdpKr4fhQO7L3j9zLPMas4ViMK2");
+                mMessageSender.sendMsgtoPhone(message0, "false", partnerUID);
                 confirmationActivity();
                 break;
             case 1:
