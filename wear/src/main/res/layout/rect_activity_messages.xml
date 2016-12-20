@@ -38,7 +38,8 @@
         android:text="Dislike"
         android:visibility="invisible"
         android:layout_below="@+id/bILike"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        />
 
     <ImageButton
         android:layout_width="50dp"

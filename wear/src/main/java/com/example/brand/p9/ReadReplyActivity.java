@@ -3,13 +3,15 @@ package com.example.brand.p9;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by brand on 12/8/2016.
@@ -52,7 +54,13 @@ public class ReadReplyActivity extends WearableActivity {
                     mTextView.setText(messages);
                 }
                 if (time != null) {
-                    mTextTime.setText("Sent at: " + time);
+
+
+                    Long timer = Long.valueOf(time);
+                    java.text.SimpleDateFormat simpleDateFormat1 = new java.text.SimpleDateFormat("E-k:m");
+                    String timeDate = simpleDateFormat1.format(new Date(timer));
+                    String formatDay = formatDate(timeDate);
+                    mTextTime.setText("Sent at: " + formatDay);
                 }
                 if(reply.equals("false")){
                   falseReply();
@@ -68,7 +76,7 @@ public class ReadReplyActivity extends WearableActivity {
         context = this;
         LocalStorageWear localStorageWear = new LocalStorageWear(context);
         userUID = localStorageWear.getSettings().get("UID");
-        partnerUID = localStorageWear.getSettings().get("PARTNERID"); //change to PARTNERID
+        partnerUID = localStorageWear.getSettings().get("PARTNER");
         partnerName = localStorageWear.getSettings().get("PARTNERNAME");
 
         if (savedInstanceState == null) {
@@ -83,11 +91,11 @@ public class ReadReplyActivity extends WearableActivity {
             }
         }
 
-        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+     /*   Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         long[] vibrationPattern = {0, 500, 50, 300};
         //-1 - don't repeat
         final int indexInPatternToRepeat = -1;
-        vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+        vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);*/
     }
 
 
@@ -136,6 +144,23 @@ public class ReadReplyActivity extends WearableActivity {
                 return false;
             }
         });
+    }
+
+    private String formatDate(String day){
+        HashMap<String, String> days = new HashMap<>();
+        days.put("Mon","Mandag");
+        days.put("Tue","Tirsdag");
+        days.put("Wed","Onsdag");
+        days.put("Thu","Torsdag");
+        days.put("Fri","Fredag");
+        days.put("Sat","Lørdag");
+        days.put("Sun","Søndag");
+
+        String[] splitDay = day.split("-");
+        String translatedDay = days.get(splitDay[0]);
+
+        String formattedDay = day.replace(splitDay[0],translatedDay);
+        return formattedDay;
     }
   }
 

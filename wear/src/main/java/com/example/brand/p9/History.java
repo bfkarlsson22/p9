@@ -139,26 +139,20 @@ public class History extends WearableActivity implements WearableListView.ClickL
 
             String userSteps = userHash.get(d);
             if(userSteps != null) {
-                Log.d("7979", userSteps);
                 stepsUser = Integer.parseInt(userSteps);
                 userGoalPercentage =  (stepsUser*1000/userGoal);
-                Log.d("7979 user%", String.valueOf(userGoalPercentage));
             }
 
             String partnerSteps = partnerHash.get(d);
             if (partnerSteps != null){
-                Log.d("7979", partnerSteps);
                 stepsPartner = Integer.parseInt(partnerSteps);
                 partnerGoalPercentage = (stepsPartner*1000/partnerGoal);
-                Log.d("7979 partner%", String.valueOf(partnerGoalPercentage));
             }
 
             if(userSteps !=null && partnerSteps !=null){
                 if(userGoalPercentage>partnerGoalPercentage){
-                    Log.d("7979 winner for "+d+" is", userName);
                     items.add(new SettingsItems(d, userName));
                 }else{
-                    Log.d("7979 winner for "+d+" is", partnerName);
                     items.add(new SettingsItems(d,partnerName));
 
 
