@@ -1,6 +1,8 @@
 package com.example.brand.p9;
 
 import android.content.Context;
+import android.database.DatabaseUtils;
+import android.util.Log;
 
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -9,7 +11,14 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DataReceiverMobile extends WearableListenerService {
 
@@ -36,10 +45,25 @@ public class DataReceiverMobile extends WearableListenerService {
                     messageHandler(dataMap);
                 } else if(action.equals("reply")){
                     replyHandler(dataMap);
+                } else if(action.equals("LOG")){
+                    logHandler(dataMap);
                 }
             }
         }
     }
+
+    private void logHandler(DataMap dataMap) {
+        if(firebaseAuth.getCurrentUser() != null){
+            String UID = firebaseAuth.getCurrentUser().getUid();
+            HashMap<String, String> logItem = new HashMap<>();
+            logItem.put("MESSAGE",dataMap.getString("MESSAGE"));
+            logItem.put("VALUE",dataMap.getString("VALUE"));
+            logItem.put("TIME",dataMap.getString("TIME"));
+
+            firebaseWriter.writeLog(UID,logItem);
+        }
+    }
+
     public void stepHandler(DataMap data, Context context){
         if(firebaseAuth.getCurrentUser() != null){
             String UID = firebaseAuth.getCurrentUser().getUid();
