@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends Activity {
@@ -91,52 +86,9 @@ public class MainActivity extends Activity {
             }
         });
 
-        //listenForMsg();
 
     }
 
-    public void listenForMsg(){
-        DatabaseReference listenerRef = mDatabase.getReference("messages/" + UID + "/");
-        ChildEventListener messageListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getValue() != null){
-                    String message = dataSnapshot.child("message").getValue().toString();
-                    String reply = dataSnapshot.child("reply").getValue().toString();
-                    String time = dataSnapshot.child("time").getValue().toString();
-                    Log.d("9999", message+reply+time);
-
-                    dataSenderMobile.sendMessage(message, time, reply);}
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getValue() != null){
-                String check = dataSnapshot.getValue().toString();
-
-                    Log.d("5555", "onchildchanged: " + check);
-            }}
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        listenerRef.limitToLast(1).addChildEventListener(messageListener);
-
-    }
 
     @Override
     protected void onStart() {

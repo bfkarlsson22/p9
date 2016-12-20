@@ -27,6 +27,7 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
     String message2 = "I'm almost done";
     String message3 = "Keep up the work";
     private DataSenderWear mMessageSender;
+    LocalStorageWear localStorageWear;
     String partnerUID;
 
 
@@ -61,15 +62,12 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
 
         });
         mMessageSender = new DataSenderWear(mContext);
+        localStorageWear = new LocalStorageWear(mContext);
+        partnerUID = localStorageWear.getSettings().get("PARTNER");
 
-        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras == null) {
-                partnerUID = null;
-            } else {
-                partnerUID = extras.getString("partnerUID");}
-            Log.d("5656", partnerUID);
-    }}
+    }
+
+
 
     private void loadAdapter() {
         List<SettingsItems> items = new ArrayList<>();
@@ -91,7 +89,7 @@ public class SendMsgActivity extends WearableActivity implements WearableListVie
     public void onClick(WearableListView.ViewHolder viewHolder) {
         switch (viewHolder.getPosition()) {
             case 0:
-                mMessageSender.sendMsgtoPhone(message0, "false", partnerUID);
+                mMessageSender.sendMsgtoPhone(message0, "false", "GOdpKr4fhQO7L3j9zLPMas4ViMK2");
                 confirmationActivity();
                 break;
             case 1:

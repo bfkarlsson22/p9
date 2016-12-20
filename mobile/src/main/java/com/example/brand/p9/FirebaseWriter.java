@@ -5,8 +5,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
-import static android.R.attr.data;
-
 
 public class FirebaseWriter {
 
@@ -24,4 +22,15 @@ public class FirebaseWriter {
         databaseReference.push().setValue(stepData);
     }
 
+    public void writeMessage(String message, String reply, String partnerUID){
+
+        Long time = System.currentTimeMillis();
+        String currentTime = String.valueOf(time);
+        DatabaseReference messageRef = firebaseDatabase.getReference("messages/" +partnerUID); // change userName to partner after dev
+        HashMap<String, String> messageMap = new HashMap<>();
+        messageMap.put("message",message);
+        messageMap.put("time",currentTime);
+        messageMap.put("reply",reply);
+        messageRef.push().setValue(messageMap);
+    }
 }
