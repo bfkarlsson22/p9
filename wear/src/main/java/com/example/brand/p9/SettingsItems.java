@@ -10,7 +10,13 @@ public class SettingsItems {
         this.iconRes = iconRes;
         this.title = title;
     }
+
+    public SettingsItems(String day, String title){
+        this.day = day;
+        this.title = title;
+    }
     public int iconRes;
     public String title;
+    public String day;
 
 }

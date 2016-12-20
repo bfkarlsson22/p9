@@ -12,13 +12,28 @@
         android:padding="5dp"
         app:layout_box="all">
 
-    <android.support.wearable.view.WearableListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/sample_list_view"
-        app:layout_box="all"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textSendMsg"
+            android:text="Send Message"
+            android:layout_gravity="center_horizontal"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="134dp"
+            android:layout_gravity="bottom">
+            <android.support.wearable.view.WearableListView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/sample_list_view"
+                app:layout_box="all"
+                />
+        </RelativeLayout>
+
+
+
     </FrameLayout>
 
 </android.support.wearable.view.BoxInsetLayout>
