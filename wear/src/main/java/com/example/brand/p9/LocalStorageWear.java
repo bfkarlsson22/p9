@@ -67,6 +67,8 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String query = "SELECT * FROM DAILYDATA WHERE USER='"+user+"' AND UNIT='"+unit+"' AND DAY='"+day+"'";
         Cursor cursor = db.rawQuery(query,null);
+        Log.d("QUERY",query);
+        Log.d("DUMP CURSOR",DatabaseUtils.dumpCursorToString(cursor));
         return cursor;
     }
 

@@ -4,32 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-/**
- * Created by brand on 12/15/2016.
- */
 
 public class DetailActivity extends WearableActivity {
 
@@ -133,10 +121,15 @@ public class DetailActivity extends WearableActivity {
         paintActivity.setStrokeWidth(10);
         paintActivity.setAntiAlias(true);
 
-        Paint textPaint = new Paint();
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(15);
-        textPaint.setColor(Color.WHITE);
+        Paint headLinePaint = new Paint();
+        headLinePaint.setAntiAlias(true);
+        headLinePaint.setTextSize(30);
+        headLinePaint.setColor(Color.WHITE);
+
+        Paint smallTextPaint = new Paint();
+        smallTextPaint.setAntiAlias(true);
+        smallTextPaint.setTextSize(20);
+        smallTextPaint.setColor(Color.WHITE);
 
         int width = canvas.getWidth();
         int height = canvas.getHeight();
@@ -148,7 +141,13 @@ public class DetailActivity extends WearableActivity {
         int top = centerY-centerY;
         int bottom = centerY+centerY;
 
-        canvas.drawText("ACTIVITY SCREEN",centerX,centerY,textPaint);
+        float xOffsetHeadLine = calcXOffset("AKTIVE MINUTTER",headLinePaint,centerX);
+        canvas.drawText("AKTIVE MINUTTER",xOffsetHeadLine,top+30,headLinePaint);
+
+        String translatedDay = formatDate(day);
+
+        float xOffsetDay = calcXOffset(translatedDay,smallTextPaint,centerX);
+        canvas.drawText(translatedDay,xOffsetDay,top+50,smallTextPaint);
 
 
         backgroundCanvas.setImageBitmap(bitmap);
