@@ -7,5 +7,7 @@
                                              android:layout_height="match_parent"
                                              app:rectLayout="@layout/rect_activity_stepsdetail"
                                              app:roundLayout="@layout/round_activity_stepsdetail"
-                                             tools:context="com.example.brand.p9.StepsDetail"
-                                             tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>
+                                             tools:context="com.example.brand.p9.DetailActivity"
+                                             tools:deviceIds="wear">
+
+</android.support.wearable.view.WatchViewStub>

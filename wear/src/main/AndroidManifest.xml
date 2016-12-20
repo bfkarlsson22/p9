@@ -32,7 +32,7 @@
             android:theme="@style/Theme.Wearable.Modal"
             ></activity>
         <activity
-            android:name=".StepsDetail"
+            android:name=".DetailActivity"
             android:label="StepDetail"
             android:theme="@style/Theme.Wearable.Modal"
             ></activity>

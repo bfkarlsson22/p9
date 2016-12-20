@@ -42,7 +42,7 @@ public class WearActivity extends WearableActivity {
                 stub.setOnTouchListener(new OnSwipeTouchListener(context){
                     @Override
                     public void onSwipeLeft(){
-                        Intent intent = new Intent(WearActivity.this, StepsDetail.class);
+                        Intent intent = new Intent(WearActivity.this, DetailActivity.class);
                         startActivity(intent);
 
                     }

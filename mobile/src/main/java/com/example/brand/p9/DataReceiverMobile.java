@@ -46,7 +46,7 @@ public class DataReceiverMobile extends WearableListenerService {
         }
     }
     public void stepHandler(DataMap data, Context context){
-        if(firebaseAuth.getCurrentUser().getUid() != null){
+        if(firebaseAuth.getCurrentUser() != null){
             String UID = firebaseAuth.getCurrentUser().getUid();
             LocalStorageMobile localStorageMobile = new LocalStorageMobile(context);
             localStorageMobile.storeStepData(data.getLong("TIME"),data.getInt("ID"),UID);
