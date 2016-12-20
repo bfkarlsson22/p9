@@ -92,11 +92,11 @@ public class ReadReplyActivity extends WearableActivity {
             }
         }
 
-     /*   Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         long[] vibrationPattern = {0, 500, 50, 300};
         //-1 - don't repeat
         final int indexInPatternToRepeat = -1;
-        vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);*/
+        vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
     }
 
 
