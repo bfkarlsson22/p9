@@ -11,11 +11,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.wearable.DataMap;
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 public class LocalStorageWear extends SQLiteOpenHelper {
     private static final String DB_NAME = "LocalStorage";
@@ -68,7 +66,21 @@ public class LocalStorageWear extends SQLiteOpenHelper {
         String query = "SELECT * FROM DAILYDATA WHERE USER='"+user+"' AND UNIT='"+unit+"' AND DAY='"+day+"'";
         Cursor cursor = db.rawQuery(query,null);
         Log.d("QUERY",query);
-        Log.d("DUMP CURSOR",DatabaseUtils.dumpCursorToString(cursor));
+        Log.d("DUMP CURSOR", DatabaseUtils.dumpCursorToString(cursor));
+        return cursor;
+    }
+
+    public Cursor getAllSteps(String day, String user){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM DAILYDATA WHERE DAY='"+day+"' AND USER='"+user+"'";
+        Cursor cursor = db.rawQuery(query,null);
+        return cursor;
+    }
+
+    public Cursor getSteps(String unit){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT USER AND VALUE FROM DAILYDATA WHERE UNIT='"+unit+"'";
+        Cursor cursor = db.rawQuery(query,null);
         return cursor;
     }
 

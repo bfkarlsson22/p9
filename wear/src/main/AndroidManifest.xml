@@ -36,6 +36,11 @@
             android:label="StepDetail"
             android:theme="@style/Theme.Wearable.Modal"
             ></activity>
+        <activity
+            android:name=".History"
+            android:label="History"
+            android:theme="@style/Theme.Wearable.Modal"
+            ></activity>
         <activity android:name="android.support.wearable.activity.ConfirmationActivity" />
         <activity
             android:name=".ReadReplyActivity"

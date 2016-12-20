@@ -35,6 +35,9 @@ public class SettingsAdapter extends WearableListView.Adapter {
         TextView textView = (TextView) SettingsItemView.findViewById(R.id.text);
         textView.setText(item.title);
 
+        TextView textView1 = (TextView) SettingsItemView.findViewById(R.id.text1);
+        textView1.setText(item.day);
+
         final ImageView imageView = (ImageView) SettingsItemView.findViewById(R.id.image);
         imageView.setImageResource(item.iconRes);
 

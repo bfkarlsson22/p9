@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 public class WearActivity extends WearableActivity {
 
@@ -21,6 +23,7 @@ public class WearActivity extends WearableActivity {
     Context context;
     String UID;
     String partnerUID;
+    Button mButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +37,12 @@ public class WearActivity extends WearableActivity {
         UID = localStorageWear.getSettings().get("UID");
         partnerUID = localStorageWear.getSettings().get("UID"); //change to PARTNERID
 
+
         Log.d("7575", UID+partnerUID);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+
+
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 stub.setOnTouchListener(new OnSwipeTouchListener(context){
@@ -53,7 +59,18 @@ public class WearActivity extends WearableActivity {
                         startActivity(intent);
                     }
                 });
+                mButton = (Button) findViewById(R.id.button2);
+                mButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(WearActivity.this, History.class);
+                        startActivity(intent);
+                    }
+                });
             }
+
+
+
 
 
         });
