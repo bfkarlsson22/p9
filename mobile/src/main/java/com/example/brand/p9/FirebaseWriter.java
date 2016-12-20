@@ -23,5 +23,9 @@ public class FirebaseWriter {
         stepData.put("TIME", String.valueOf(time));
         databaseReference.push().setValue(stepData);
     }
+    public void writeLog(String user, HashMap<String, String> logItem){
+        DatabaseReference databaseReference = firebaseDatabase.getReference("LOG/"+user);
+        databaseReference.push().setValue(logItem);
+    }
 
 }

@@ -13,6 +13,9 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DataSenderWear {
     private Context context;
     private GoogleApiClient googleApiClient;
@@ -72,5 +75,18 @@ public class DataSenderWear {
     public void buildApi() {
         googleApiClient = new GoogleApiClient.Builder(context).addApi(Wearable.API).build();
         googleApiClient.connect();
+    }
+
+    public void putToLog(HashMap<String, String> logItem) {
+        buildApi();
+        String timer = String.valueOf(System.currentTimeMillis());
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wear/LOG/" + timer);
+
+        for(Map.Entry<String, String> dataToWrite : logItem.entrySet()){
+            putDataMapReq.getDataMap().putString(dataToWrite.getKey(), dataToWrite.getValue());
+        }
+
+        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
+        Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
     }
 }

@@ -12,11 +12,14 @@ import android.graphics.RectF;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.wearable.watchface.CanvasWatchFaceService;
+import android.support.wearable.watchface.WatchFaceStyle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.util.Date;
 import java.util.HashMap;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by EmilSiegenfeldt on 01/12/2016.
@@ -38,7 +41,34 @@ public class WatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
-            /* initialize your watch face */
+            setWatchFaceStyle(new WatchFaceStyle.Builder(WatchFaceService.this)
+                    .setAcceptsTapEvents(true)
+                    .build());
+        }
+
+        @Override
+        public void onTapCommand(@TapType int tapType, int x, int y, long eventTime){
+            Intent intent = new Intent(WatchFaceService.this,WearActivity.class);
+            intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+            switch (tapType) {
+                case WatchFaceService.TAP_TYPE_TAP:
+                    startActivity(intent);
+
+                    break;
+
+                case WatchFaceService.TAP_TYPE_TOUCH:
+                    startActivity(intent);
+
+                    break;
+
+                case WatchFaceService.TAP_TYPE_TOUCH_CANCEL:
+                    Log.d("TAP CANCEL","X: "+x+" Y: "+y);
+                    break;
+
+                default:
+                    super.onTapCommand(tapType, x, y, eventTime);
+                    break;
+            }
         }
 
         @Override
@@ -51,8 +81,13 @@ public class WatchFaceService extends CanvasWatchFaceService {
         public void onTimeTick() {
             super.onTimeTick();
             /* the time changed */
-
-            Log.d("BATTERY LEVEL", String.valueOf(batteryMonitor()));
+            if(batteryMonitor() < 10){
+                HashMap<String,String> logItem = new HashMap<>();
+                logItem.put("MESSAGE","LOW BATTERY WEAR");
+                logItem.put("VALUE", String.valueOf(batteryMonitor()));
+                logItem.put("TIME", String.valueOf(System.currentTimeMillis()));
+                dataSender.putToLog(logItem);
+            }
 
             HashMap<String, String> settings = localStorageWear.getSettings();
             dataSender.syncData();
@@ -210,6 +245,13 @@ public class WatchFaceService extends CanvasWatchFaceService {
             float batteryLevel = ((float)level / (float)scale)*100.0f;
 
             return batteryLevel;
+        }
+        private void writeToLog(){
+            HashMap<String,String> logItem = new HashMap<>();
+            logItem.put("MESSAGE","LOW BATTERY WEAR");
+            logItem.put("VALUE", String.valueOf(batteryMonitor()));
+            logItem.put("TIME", String.valueOf(System.currentTimeMillis()));
+            dataSender.putToLog(logItem);
         }
     }
 }

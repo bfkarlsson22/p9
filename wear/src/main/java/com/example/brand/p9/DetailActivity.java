@@ -105,21 +105,15 @@ public class DetailActivity extends WearableActivity {
 
 
         Log.d("DAY",day);
-        double userMinute = getData(day,UID,"MINUTE");
-        double partnerMinute = getData(day,partnerID,"MINUTE");
-
-        Log.d("USER MINUTES", String.valueOf(userMinute));
-        Log.d("PARTNER MINUTES", String.valueOf(partnerMinute));
-
 
         Bitmap bitmap = Bitmap.createBitmap(height, width, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
-        Paint paintActivity = new Paint();
-        paintActivity.setColor(Color.parseColor("#2196F3"));
-        paintActivity.setStyle(Paint.Style.STROKE);
-        paintActivity.setStrokeWidth(10);
-        paintActivity.setAntiAlias(true);
+        Paint activityPaint = new Paint();
+        activityPaint.setColor(Color.parseColor("#2196F3"));
+        activityPaint.setStyle(Paint.Style.STROKE);
+        activityPaint.setStrokeWidth(10);
+        activityPaint.setAntiAlias(true);
 
         Paint headLinePaint = new Paint();
         headLinePaint.setAntiAlias(true);
@@ -142,12 +136,43 @@ public class DetailActivity extends WearableActivity {
         int bottom = centerY+centerY;
 
         float xOffsetHeadLine = calcXOffset("AKTIVE MINUTTER",headLinePaint,centerX);
-        canvas.drawText("AKTIVE MINUTTER",xOffsetHeadLine,top+30,headLinePaint);
+        canvas.drawText("AKTIVE MINUTTER",xOffsetHeadLine,top+50,headLinePaint);
 
         String translatedDay = formatDate(day);
 
         float xOffsetDay = calcXOffset(translatedDay,smallTextPaint,centerX);
-        canvas.drawText(translatedDay,xOffsetDay,top+50,smallTextPaint);
+        canvas.drawText(translatedDay,xOffsetDay,top+70,smallTextPaint);
+
+        double userMinutes = getData(day,UID,"MINUTE");
+        double partnerMinutes = getData(day,partnerID,"MINUTE");
+        double userGoal = 30;
+        double partnerGoal = 30;
+
+        float startYUser = centerY-40;
+        float graphBounds = width-80;
+        float graphStartUser = centerX-(graphBounds/2);
+        float graphEndUser = centerX+(graphBounds/2);
+        float graphLengthUser = graphStartUser+calcGraph(userMinutes,userGoal,graphBounds);
+        float zeroOffsetUser = calcYOffset("0",smallTextPaint,startYUser);
+        float hundredYOffsetUser = calcYOffset("30",smallTextPaint,startYUser);
+        float hundredXOffsetUser = graphEndUser-getTextWidth("30",smallTextPaint)+30;
+
+        float startYPartner = centerY+40;
+        float graphStartPartner = centerX-(graphBounds/2);
+        float graphEndPartner = centerX+(graphBounds/2);
+        float graphLengthPartner = graphStartPartner+calcGraph(partnerMinutes,partnerGoal,graphBounds);
+        float zeroOffsetPartner = calcYOffset("0",smallTextPaint,startYPartner);
+        float hundredYOffsetPartner = calcYOffset("30",smallTextPaint,startYPartner);
+        float hundredXOffsetPartner = graphEndPartner-getTextWidth("30",smallTextPaint)+30;
+
+        canvas.drawLine(graphStartPartner,startYPartner,graphLengthPartner,startYPartner,activityPaint);
+        canvas.drawText("0",graphStartPartner-30,zeroOffsetPartner,smallTextPaint);
+        canvas.drawText("30",hundredXOffsetPartner,hundredYOffsetPartner,smallTextPaint);
+
+
+        canvas.drawLine(graphStartUser,startYUser,graphLengthUser,startYUser,activityPaint);
+        canvas.drawText("0",graphStartUser-30,zeroOffsetUser,smallTextPaint);
+        canvas.drawText("30",hundredXOffsetUser,hundredYOffsetUser,smallTextPaint);
 
 
         backgroundCanvas.setImageBitmap(bitmap);
